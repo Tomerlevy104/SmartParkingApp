@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name -->
+    <string name="app_name">SmartParkingApp</string>
+
+    <!-- Welcome Screen -->
+    <string name="app_logo">App Logo</string>
+    <string name="app_tagline">Find parking spaces easily and efficiently</string>
+    <string name="app_version">Version 1.0.0</string>
+
+    <!-- Registration Screen -->
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="role">Role</string>
+    <string name="choose_avatar">Choose Avatar</string>
+    <string name="select_avatar">Select Avatar</string>
+    <string name="avatar_selected">Avatar selected</string>
+    <string name="avatar_preview">Avatar preview</string>
+    <string name="registration_successful">Registration successful</string>
+
+    <!-- Login Screen -->
+    <string name="login">Login</string>
+    <string name="system_id">System ID</string>
+    <string name="user_email">Email Address</string>
+    <string name="no_account_register">Don\'t have an account? Register</string>
+    <string name="login_successful">Login successful</string>
+
+    <!-- Urban Zone Activity -->
+    <string name="search_parking_services">Parking Services Around You</string>
+    <string name="parking_in_blue_white">Parking in Blue-White</string>
+    <string name="tel_aviv_yafo">Tel Aviv-Yafo</string>
+    <string name="main_city_streets">City Streets (Zones 1,2,4,12,13)</string>
+    <string name="sample_license_number">98-410-11</string>
+    <string name="app_smart_branding">pango.smart</string>
+    <string name="cancel">Cancel</string>
+    <string name="activate_personal_reminder">Activate Personal Reminder</string>
+    <string name="activate">Activate</string>
+    <string name="parking">Parking</string>
+    <string name="parking_history">Parking History</string>
+    <string name="user_details">User Details</string>
+    <string name="total_parking_spots">Total Spots:</string>
+    <string name="available_spots">Available Spots:</string>
+    <string name="logout">Logout</string>
+    <string name="logout_confirmation">Are you sure you want to logout?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="hourly_rate">Hourly Rate:</string>
+    <string name="available_parking_spots">Available Parking Spots</string>
+    <string name="covered">Covered</string>
+
+    <!-- Error Messages -->
+    <string name="error_email">Please enter a valid email address</string>
+    <string name="error_username">Please enter a username</string>
+    <string name="error_role">Please select a role</string>
+    <string name="error_system_id">Please enter a system ID</string>
+    <string name="error_login_failed">Login failed. Please check your credentials.</string>
+
+    <!-- Role Options -->
+    <string name="role_admin">Administrator</string>
+    <string name="role_operator">Operator</string>
+    <string name="role_end_user">End User</string>
+
+</resources>
