@@ -8,8 +8,7 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    // Tomer IP: 172.20.10.6
-    private const val BASE_URL = "http://172.20.10.6:8081/" // This points to localhost on your computer when running in the Android emulator
+    private const val BASE_URL = "http://XXXXXXXXXXX/" // This points to localhost on your computer when running in the Android emulator
 
     // Create OkHttpClient with logging
     private val okHttpClient = OkHttpClient.Builder()
