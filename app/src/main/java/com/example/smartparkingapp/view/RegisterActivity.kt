@@ -1,33 +1,51 @@
 package com.example.smartparkingapp.view
+
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.smartparkingapp.R
+import com.example.smartparkingapp.controller.UserController
 import com.example.smartparkingapp.databinding.ActivityRegisterBinding
+import com.example.smartparkingapp.model.User
+import com.example.smartparkingapp.services.impl.UserServiceImpl
+import com.example.smartparkingapp.services.impl.ValidationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
-    private var avatarString: String = "" // Default empty avatar string
+    private var avatarString: String = "default" // Default avatar
+    private lateinit var userController: UserController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize the Controller
+        initializeController()
+
         setupRoleDropdown()
         setupAvatarDropdown()
         setupListeners()
     }
 
+    private fun initializeController() {
+        val userService = UserServiceImpl()
+        userController = UserController(userService)
+    }
+
     private fun setupRoleDropdown() {
-        val roles = arrayOf(
-            getString(R.string.role_admin),
-            getString(R.string.role_operator),
-            getString(R.string.role_end_user)
-        )
+        val roles = arrayOf("ADMIN", "OPERATOR", "END_USER")
         val adapter = ArrayAdapter(this, R.layout.dropdown_item, roles)
         binding.dropdownRole.setAdapter(adapter)
+        // Set default selection
+        binding.dropdownRole.setText("END_USER", false)
     }
 
     private fun setupAvatarDropdown() {
@@ -39,7 +57,7 @@ class RegisterActivity : AppCompatActivity() {
             val selectedAvatar = avatars[position]
             avatarString = selectedAvatar
 
-            // Set the appropriate image based on selection
+            // Update image based on selection
             val resourceId = when (selectedAvatar) {
                 "boy" -> R.drawable.avatar_boy
                 "girl" -> R.drawable.avatar_girl
@@ -51,24 +69,124 @@ class RegisterActivity : AppCompatActivity() {
             binding.ivAvatarPreview.setImageResource(resourceId)
             binding.tvAvatarSelected.text = "Selected avatar: $selectedAvatar"
         }
+
+        // Set default selection
+        binding.dropdownAvatar.setText("default", false)
+        binding.ivAvatarPreview.setImageResource(R.drawable.avatar_default)
+        binding.tvAvatarSelected.text = "Selected avatar: default"
     }
 
     private fun setupListeners() {
-        // Setup register button
+        // Register button
         binding.btnRegister.setOnClickListener {
-            // Collect form data including the avatarString
-            val email = binding.etEmail.text.toString().trim()
-            val username = binding.etUsername.text.toString().trim()
-            val role = binding.dropdownRole.text.toString()
+            performRegistration()
+        }
 
-            // Here you would pass these values to your controller
-            // For now, we just finish the activity
+        // Back button
+        binding.btnBack.setOnClickListener {
             finish()
         }
+    }
 
-        // Setup back button
-        binding.btnBack.setOnClickListener {
-            finish() // Close this activity and return to the previous one
+    private fun performRegistration() {
+        // Collect data from form - no validation here!
+        val email = binding.etEmail.text.toString().trim()
+        val username = binding.etUsername.text.toString().trim()
+        val role = binding.dropdownRole.text.toString().trim()
+
+        // Clear previous errors
+        clearFieldErrors()
+
+        // Show loading indicator
+        showLoading(true)
+
+        // Perform registration in background
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                // Call Controller - it will handle validation
+                val user = userController.register(email, username, role, avatarString)
+
+                // Return to Main thread to update UI
+                withContext(Dispatchers.Main) {
+                    hideLoading()
+                    handleRegistrationSuccess(user)
+                }
+            } catch (e: ValidationException) {
+                // Field-specific validation errors from service
+                withContext(Dispatchers.Main) {
+                    hideLoading()
+                    handleFieldValidationError(e.field, e.message ?: "Invalid input")
+                }
+            } catch (e: IllegalArgumentException) {
+                // General validation errors from service
+                withContext(Dispatchers.Main) {
+                    hideLoading()
+                    handleValidationError(e.message)
+                }
+            } catch (e: Exception) {
+                // Network or server errors
+                withContext(Dispatchers.Main) {
+                    hideLoading()
+                    handleRegistrationError(e.message)
+                }
+            }
         }
+    }
+
+    // Clear previous errors from form
+    private fun clearFieldErrors() {
+        binding.etEmail.error = null
+        binding.etUsername.error = null
+        binding.dropdownRole.error = null
+    }
+
+    private fun showLoading(show: Boolean) {
+        if (show) {
+            // If you have a ProgressBar in XML file
+            // binding.progressBar.visibility = View.VISIBLE
+            binding.btnRegister.isEnabled = false
+            binding.btnRegister.text = "Registering..."
+        }
+    }
+
+    private fun hideLoading() {
+        // If you have a ProgressBar in XML file
+        // binding.progressBar.visibility = View.GONE
+        binding.btnRegister.isEnabled = true
+        binding.btnRegister.text = getString(R.string.register)
+    }
+
+    private fun handleRegistrationSuccess(user: User) {
+        // Show success message
+        Toast.makeText(this, "Registration successful! Welcome ${user.username}!", Toast.LENGTH_LONG).show()
+        navigateToMainScreen()
+    }
+
+    private fun handleFieldValidationError(field: String, message: String) {
+        // Clear all previous errors
+        clearFieldErrors()
+
+        // Set error on specific field with red border
+        when (field) {
+            "email" -> binding.etEmail.error = message
+            "username" -> binding.etUsername.error = message
+            "role" -> binding.dropdownRole.error = message
+        }
+    }
+
+    private fun handleValidationError(message: String?) {
+        val errorMessage = message ?: "Please check your input"
+        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+    }
+
+    private fun handleRegistrationError(message: String?) {
+        val errorMessage = message ?: "Registration failed. Please try again."
+        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+    }
+
+    private fun navigateToMainScreen() {
+        val intent = Intent(this, UrbanZoneActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
