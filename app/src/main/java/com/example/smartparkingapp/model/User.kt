@@ -7,6 +7,6 @@ package com.example.smartparkingapp.model
 data class User(
     val email: String = "",
     val username: String = "",
-    val role: String = "",
-    private val avatar: String = ""
+    var role: String = "",
+    var avatar: String = ""
 )

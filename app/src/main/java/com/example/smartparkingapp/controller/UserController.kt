@@ -3,28 +3,39 @@ package com.example.smartparkingapp.controller
 import com.example.smartparkingapp.model.User
 import com.example.smartparkingapp.services.IUserService
 
-/**
- * Controller class for handling user-related operations.
- * This controller serves as an intermediary between the UI and business logic.
- */
 class UserController(private val userService: IUserService) {
 
-    /**
-     * מטפל בהרשמת משתמש חדש
-     *
-     * @param email כתובת האימייל של המשתמש
-     * @param username שם המשתמש
-     * @param role התפקיד שנבחר
-     * @param avatar האווטר שנבחר
-     * @return המשתמש שנוצר
-     * @throws IllegalArgumentException אם הקלט לא תקין
-     * @throws Exception אם ההרשמה נכשלה
-     */
-    fun register(email: String, username: String, role: String, avatar: String): User {
-        return userService.register(email, username, role, avatar)
+    fun register(email: String,role: String, username: String, avatar: String): User {
+        return userService.register(email, role, username, avatar)
     }
 
-    // פונקציות נוספות (לא רלוונטיות לעכשיו)
+    fun login(systemId: String, email: String): User {
+        return userService.login(systemId, email)
+    }
+
+    fun updateUser(
+        userEmail: String,
+        systemID: String,
+        role: String? = null,
+        username: String? = null,
+        avatar: String? = null
+    ): User {
+        return userService.updateUser(userEmail,systemID,role, username, avatar)
+    }
+//    fun updateUser(
+//        email: String? = null,
+//        username: String? = null,
+//        role: String? = null,
+//        avatar: String? = null
+//    ): User {
+//        return userService.updateUser(email, username, role, avatar)
+//    }
+
+//    // Overloaded login that only needs email (uses a default systemId)
+//    fun login(email: String): User {
+//        return userService.login("2025b.adir.davidov", email)
+//    }
+
     fun getCurrentUser(): User? {
         return userService.getCurrentUser()
     }
@@ -37,8 +48,8 @@ class UserController(private val userService: IUserService) {
         return userService.getCurrentUser() != null
     }
 
-    // TODO: Implement when needed
-    fun login(systemId: String, email: String): User {
-        return userService.login(systemId, email)
+    fun refreshCurrentUserProfile(): User {
+        return userService.refreshCurrentUserProfile()
     }
+
 }

@@ -37,6 +37,7 @@ class LoginActivity : AppCompatActivity() {
                 // Call the controller to handle login
                 userController.login(systemId, userEmail)
 
+
                 Toast.makeText(this, getString(R.string.login_successful), Toast.LENGTH_SHORT).show()
 
                 // Navigate to UrbanZoneActivity after successful login

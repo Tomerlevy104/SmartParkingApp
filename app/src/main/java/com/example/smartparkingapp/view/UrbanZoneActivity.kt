@@ -2,6 +2,7 @@ package com.example.smartparkingapp.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,16 +14,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smartparkingapp.R
+import com.example.smartparkingapp.controller.UserController
 import com.example.smartparkingapp.databinding.ActivityUrbanZoneBinding
 import com.example.smartparkingapp.model.ParkingSpot
 import com.example.smartparkingapp.model.UrbanZone
+import com.example.smartparkingapp.model.User
+import com.example.smartparkingapp.services.impl.UserServiceImpl
 
 class UrbanZoneActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUrbanZoneBinding
     private lateinit var parkingSpotAdapter: ParkingSpotAdapter
-
-    // מידע על ה-UrbanZone הנוכחי - יוזרק מאוחר יותר
+    private var currentUser: User? = null
+    private lateinit var userController: UserController
     private var selectedUrbanZone: UrbanZone? = null
 
     // רשימת חניות לדגימה
@@ -84,10 +88,16 @@ class UrbanZoneActivity : AppCompatActivity() {
         binding = ActivityUrbanZoneBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize user controller
+        initializeUserController()
+
+        // Get user details from intent
+        getUserFromIntent()
+
         setupRecyclerView()
         setupButtons()
 
-        // יצירת אובייקט UrbanZone עם נתוני דוגמה
+        // Create sample UrbanZone with data
         selectedUrbanZone = UrbanZone(
             id = "1",
             name = "Tel Aviv",
@@ -103,6 +113,55 @@ class UrbanZoneActivity : AppCompatActivity() {
         )
 
         updateUrbanZoneUI()
+    }
+
+    /**
+     * Initialize user controller
+     */
+    private fun initializeUserController() {
+        val userService = UserServiceImpl()
+        userController = UserController(userService)
+    }
+
+    /**
+     * Get user details from intent extras or controller
+     */
+    private fun getUserFromIntent() {
+        Log.d("UrbanZoneActivity", "getUserFromIntent called")
+
+        if (currentUser == null) {
+            val email = intent.getStringExtra("USER_EMAIL")
+            val username = intent.getStringExtra("USER_USERNAME")
+            val role = intent.getStringExtra("USER_ROLE")
+            val avatar = intent.getStringExtra("USER_AVATAR")
+
+            Log.d("UrbanZoneActivity", "Intent extras: email=$email, username=$username, role=$role, avatar=$avatar")
+
+            if (email != null && username != null && role != null) {
+                currentUser = User(
+                    email = email,
+                    username = username,
+                    role = role,
+                    avatar = avatar ?: "default"
+                )
+                Log.d("UrbanZoneActivity", "User created: ${currentUser?.email}, ${currentUser?.username}")
+
+                // Store in controller
+                //userController.setCurrentUser(currentUser!!)
+            }
+            Log.d("UserDetailsActivity", "Received from intent: email=$email, username=$username, role=$role, avatar=$avatar")
+
+        }
+
+        // If still no user, redirect to welcome screen
+        if (currentUser == null) {
+            Toast.makeText(
+                this,
+                "No user login information found. Please login again.",
+                Toast.LENGTH_LONG
+            ).show()
+            navigateToWelcome()
+        }
     }
 
     private fun setupRecyclerView() {
@@ -143,11 +202,16 @@ class UrbanZoneActivity : AppCompatActivity() {
 
     private fun setupButtons() {
         binding.citySelectorLayout.setOnClickListener {
-            Toast.makeText(this, "City selection will be implemented later", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "City selection will be implemented later", Toast.LENGTH_SHORT)
+                .show()
         }
 
         binding.ivSearch.setOnClickListener {
-            Toast.makeText(this, "Search functionality will be implemented later", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Search functionality will be implemented later",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
         binding.btnLogout.setOnClickListener {
@@ -155,15 +219,29 @@ class UrbanZoneActivity : AppCompatActivity() {
         }
 
         binding.actionButtonCard.setOnClickListener {
-            Toast.makeText(this, "Parking activation will be implemented later", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Parking activation will be implemented later", Toast.LENGTH_SHORT)
+                .show()
         }
 
         binding.parkingHistoryBTN.setOnClickListener {
-            Toast.makeText(this, "Parking History will be implemented later", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Parking History will be implemented later", Toast.LENGTH_SHORT)
+                .show()
         }
 
+        // Navigate to UserDetailsActivity when user details button is clicked
         binding.userDetailsBTN.setOnClickListener {
-            Toast.makeText(this, "User Details will be implemented later", Toast.LENGTH_SHORT).show()
+            Log.d("UrbanZoneActivity", "Current user before intent: ${currentUser?.email}, ${currentUser?.username}, ${currentUser?.role}")
+
+            val intent = Intent(this, UserDetailsActivity::class.java)
+
+            currentUser?.let { user ->
+                intent.putExtra("USER_EMAIL", user.email)
+                intent.putExtra("USER_USERNAME", user.username)
+                intent.putExtra("USER_ROLE", user.role)
+                intent.putExtra("USER_AVATAR", user.avatar)
+            }
+
+            startActivity(intent)
         }
     }
 
@@ -182,10 +260,12 @@ class UrbanZoneActivity : AppCompatActivity() {
             .setTitle("Parking Spot Details")
             .setMessage(message)
             .setPositiveButton("Navigate") { _, _ ->
-                Toast.makeText(this, "Navigation will be implemented later", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Navigation will be implemented later", Toast.LENGTH_SHORT)
+                    .show()
             }
             .setNegativeButton("Reserve") { _, _ ->
-                Toast.makeText(this, "Reservation will be implemented later", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Reservation will be implemented later", Toast.LENGTH_SHORT)
+                    .show()
             }
             .setNeutralButton("Cancel", null)
             .show()
@@ -252,7 +332,8 @@ class UrbanZoneActivity : AppCompatActivity() {
 
         inner class ParkingSpotViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             private val tvParkingAddress: TextView = itemView.findViewById(R.id.tvParkingAddress)
-            private val tvParkingRestrictions: TextView = itemView.findViewById(R.id.tvParkingRestrictions)
+            private val tvParkingRestrictions: TextView =
+                itemView.findViewById(R.id.tvParkingRestrictions)
             private val tvParkingPrice: TextView = itemView.findViewById(R.id.tvParkingPrice)
             private val tvParkingCovered: TextView = itemView.findViewById(R.id.tvParkingCovered)
             private val tvTurnoverRate: TextView = itemView.findViewById(R.id.tvTurnoverRate)

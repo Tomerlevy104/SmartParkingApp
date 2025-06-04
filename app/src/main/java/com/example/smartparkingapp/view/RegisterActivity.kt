@@ -19,8 +19,9 @@ import kotlinx.coroutines.withContext
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
-    private var avatarString: String = "default" // Default avatar
+    private var avatarString: String = "default"
     private lateinit var userController: UserController
+    private var currentUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,7 @@ class RegisterActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, R.layout.dropdown_item, roles)
         binding.dropdownRole.setAdapter(adapter)
         // Set default selection
-        binding.dropdownRole.setText("END_USER", false)
+        binding.dropdownRole.setText("Please select Role", false)
     }
 
     private fun setupAvatarDropdown() {
@@ -71,7 +72,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         // Set default selection
-        binding.dropdownAvatar.setText("default", false)
+        binding.dropdownAvatar.setText("Please select Avatar", false)
         binding.ivAvatarPreview.setImageResource(R.drawable.avatar_default)
         binding.tvAvatarSelected.text = "Selected avatar: default"
     }
@@ -89,10 +90,11 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun performRegistration() {
-        // Collect data from form - no validation here!
+        // Collect data from form
         val email = binding.etEmail.text.toString().trim()
         val username = binding.etUsername.text.toString().trim()
         val role = binding.dropdownRole.text.toString().trim()
+        val avatar = binding.dropdownAvatar.text.toString().trim()
 
         // Clear previous errors
         clearFieldErrors()
@@ -104,12 +106,17 @@ class RegisterActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 // Call Controller - it will handle validation
-                val user = userController.register(email, username, role, avatarString)
+                val user = userController.register(email, role, username, avatarString)
+
+//                // Store the registered user
+//                currentUser = user
+
 
                 // Return to Main thread to update UI
                 withContext(Dispatchers.Main) {
                     hideLoading()
-                    handleRegistrationSuccess(user)
+                    handleRegistrationSuccess(email, username, role, avatar)
+
                 }
             } catch (e: ValidationException) {
                 // Field-specific validation errors from service
@@ -142,24 +149,35 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun showLoading(show: Boolean) {
         if (show) {
-            // If you have a ProgressBar in XML file
-            // binding.progressBar.visibility = View.VISIBLE
             binding.btnRegister.isEnabled = false
             binding.btnRegister.text = "Registering..."
         }
     }
 
     private fun hideLoading() {
-        // If you have a ProgressBar in XML file
-        // binding.progressBar.visibility = View.GONE
         binding.btnRegister.isEnabled = true
         binding.btnRegister.text = getString(R.string.register)
     }
 
-    private fun handleRegistrationSuccess(user: User) {
+    private fun handleRegistrationSuccess(
+        email: String,
+        username: String,
+        role: String,
+        avatar: String
+    ) {
+
         // Show success message
-        Toast.makeText(this, "Registration successful! Welcome ${user.username}!", Toast.LENGTH_LONG).show()
-        navigateToMainScreen()
+        Toast.makeText(this, "Registration successful! Welcome ${username}!", Toast.LENGTH_LONG)
+            .show()
+
+        // Pass user details to UrbanZoneActivity
+        val intent = Intent(this, UrbanZoneActivity::class.java)
+        intent.putExtra("USER_EMAIL", email)
+        intent.putExtra("USER_USERNAME", username)
+        intent.putExtra("USER_ROLE", role)
+        intent.putExtra("USER_AVATAR", avatar)
+        startActivity(intent)
+        finish() // Close this activity
     }
 
     private fun handleFieldValidationError(field: String, message: String) {
@@ -182,11 +200,5 @@ class RegisterActivity : AppCompatActivity() {
     private fun handleRegistrationError(message: String?) {
         val errorMessage = message ?: "Registration failed. Please try again."
         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-    }
-
-    private fun navigateToMainScreen() {
-        val intent = Intent(this, UrbanZoneActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 }

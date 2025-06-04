@@ -49,6 +49,14 @@
     <string name="available_parking_spots">Available Parking Spots</string>
     <string name="covered">Covered</string>
 
+    <!-- User Details Fragment -->
+    <string name="profile_information">Profile Information</string>
+    <string name="save">Save</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="profile_updated_successfully">Profile updated successfully!</string>
+    <string name="failed_to_load_profile">Failed to load profile</string>
+    <string name="failed_to_update_profile">Failed to update profile</string>
+
     <!-- Error Messages -->
     <string name="error_email">Please enter a valid email address</string>
     <string name="error_username">Please enter a username</string>
@@ -60,5 +68,7 @@
     <string name="role_admin">Administrator</string>
     <string name="role_operator">Operator</string>
     <string name="role_end_user">End User</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

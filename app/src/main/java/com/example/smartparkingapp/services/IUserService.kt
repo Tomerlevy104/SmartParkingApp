@@ -3,6 +3,7 @@ package com.example.smartparkingapp.services
 import com.example.smartparkingapp.model.User
 
 interface IUserService {
+
     /**
      * Authenticates a user with the given system ID and email
      *
@@ -25,7 +26,31 @@ interface IUserService {
      * @throws IllegalArgumentException if parameters are invalid
      * @throws Exception if registration fails for other reasons
      */
-    fun register(email: String, username: String, role: String, avatar: String): User
+    fun register(email: String, role: String, username: String, avatar: String): User
+
+
+    /**
+     * Updates a specific user's profile
+     *
+     * @param userId The ID of the user to update
+     * @param email New email (optional)
+     * @param username New username (optional)
+     * @param role New role (optional)
+     * @param avatar New avatar (optional)
+     * @return The updated User object
+     * @throws IllegalArgumentException if userId is invalid
+     * @throws Exception if update fails
+     */
+    fun updateUser(
+        userEmail: String,
+        systemID: String,
+        role: String? = null,
+        username: String? = null,
+        avatar: String? = null
+    ): User
+
+//    fun refreshCurrentUserProfile(currentUser: User): User
+    fun refreshCurrentUserProfile(): User
 
     /**
      * Gets the currently logged in user, if any
@@ -41,58 +66,4 @@ interface IUserService {
      */
     fun logout(): Boolean
 
-    /**
-     * Refreshes the current user's profile from the server
-     *
-     * @return The updated User object
-     * @throws Exception if refresh fails
-     */
-    fun refreshCurrentUserProfile(): User
-
-    /**
-     * Gets a user by their ID from the server
-     *
-     * @param userId The ID of the user to retrieve
-     * @return The User object if found
-     * @throws IllegalArgumentException if userId is invalid
-     * @throws Exception if retrieval fails
-     */
-    fun getUserById(userId: String): User
-
-    /**
-     * Updates the current user's profile
-     *
-     * @param email New email (optional)
-     * @param username New username (optional)
-     * @param role New role (optional)
-     * @param avatar New avatar (optional)
-     * @return The updated User object
-     * @throws Exception if update fails
-     */
-    fun updateCurrentUserProfile(
-        email: String? = null,
-        username: String? = null,
-        role: String? = null,
-        avatar: String? = null
-    ): User
-
-    /**
-     * Updates a specific user's profile (admin function)
-     *
-     * @param userId The ID of the user to update
-     * @param email New email (optional)
-     * @param username New username (optional)
-     * @param role New role (optional)
-     * @param avatar New avatar (optional)
-     * @return The updated User object
-     * @throws IllegalArgumentException if userId is invalid
-     * @throws Exception if update fails
-     */
-    fun updateUser(
-        userId: String,
-        email: String? = null,
-        username: String? = null,
-        role: String? = null,
-        avatar: String? = null
-    ): User
 }
