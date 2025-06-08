@@ -1,6 +1,6 @@
 package com.example.smartparkingapp.controller
 
-import com.example.smartparkingapp.model.ParkingSpot
+import com.example.smartparkingapp.model.ParkingSpotModel
 import com.example.smartparkingapp.services.IParkingSpotService
 
 /**
@@ -15,7 +15,7 @@ class ParkingSpotController(private val parkingSpotService: IParkingSpotService)
      * @return List of all parking spots
      * @throws Exception if retrieval fails
      */
-    fun getAllParkingSpots(): List<ParkingSpot> {
+    fun getAllParkingSpots(): List<ParkingSpotModel> {
         return parkingSpotService.getAllParkingSpots()
     }
 
@@ -27,7 +27,7 @@ class ParkingSpotController(private val parkingSpotService: IParkingSpotService)
      * @throws IllegalArgumentException if ID is invalid
      * @throws Exception if retrieval fails
      */
-    fun getParkingSpotsByUrbanZone(urbanZoneId: String): List<ParkingSpot> {
+    fun getParkingSpotsByUrbanZone(urbanZoneId: String): List<ParkingSpotModel> {
         return parkingSpotService.getParkingSpotsByUrbanZone(urbanZoneId)
     }
 
@@ -39,7 +39,7 @@ class ParkingSpotController(private val parkingSpotService: IParkingSpotService)
      * @throws IllegalArgumentException if ID is invalid
      * @throws Exception if retrieval fails
      */
-    fun getAvailableParkingSpots(urbanZoneId: String): List<ParkingSpot> {
+    fun getAvailableParkingSpots(urbanZoneId: String): List<ParkingSpotModel> {
         return parkingSpotService.getAvailableParkingSpots(urbanZoneId)
     }
 
@@ -52,7 +52,7 @@ class ParkingSpotController(private val parkingSpotService: IParkingSpotService)
      * @throws NoSuchElementException if parking spot not found
      * @throws Exception if retrieval fails
      */
-    fun getParkingSpotById(parkingSpotId: String): ParkingSpot {
+    fun getParkingSpotById(parkingSpotId: String): ParkingSpotModel {
         return parkingSpotService.getParkingSpotById(parkingSpotId)
     }
 
@@ -64,7 +64,7 @@ class ParkingSpotController(private val parkingSpotService: IParkingSpotService)
      * @throws IllegalArgumentException if parameters are invalid
      * @throws Exception if creation fails
      */
-    fun createParkingSpot(parkingSpot: ParkingSpot): ParkingSpot {
+    fun createParkingSpot(parkingSpot: ParkingSpotModel): ParkingSpotModel {
         return parkingSpotService.createParkingSpot(parkingSpot)
     }
 
@@ -77,7 +77,7 @@ class ParkingSpotController(private val parkingSpotService: IParkingSpotService)
      * @throws NoSuchElementException if parking spot not found
      * @throws Exception if update fails
      */
-    fun updateParkingSpot(parkingSpot: ParkingSpot): ParkingSpot {
+    fun updateParkingSpot(parkingSpot: ParkingSpotModel): ParkingSpotModel {
         return parkingSpotService.updateParkingSpot(parkingSpot)
     }
 
@@ -104,7 +104,7 @@ class ParkingSpotController(private val parkingSpotService: IParkingSpotService)
      * @throws NoSuchElementException if parking spot not found
      * @throws Exception if update fails
      */
-    fun setOccupancyStatus(parkingSpotId: String, isOccupied: Boolean): ParkingSpot {
+    fun setOccupancyStatus(parkingSpotId: String, isOccupied: Boolean): ParkingSpotModel {
         return parkingSpotService.setOccupancyStatus(parkingSpotId, isOccupied)
     }
 
@@ -118,7 +118,7 @@ class ParkingSpotController(private val parkingSpotService: IParkingSpotService)
      * @throws IllegalArgumentException if parameters are invalid
      * @throws Exception if search fails
      */
-    fun findNearestAvailableSpots(latitude: Double, longitude: Double, limit: Int = 10): List<ParkingSpot> {
+    fun findNearestAvailableSpots(latitude: Double, longitude: Double, limit: Int = 10): List<ParkingSpotModel> {
         return parkingSpotService.findNearestAvailableSpots(latitude, longitude, limit)
     }
 
@@ -132,7 +132,7 @@ class ParkingSpotController(private val parkingSpotService: IParkingSpotService)
      * @throws NoSuchElementException if parking spot not found
      * @throws Exception if update fails
      */
-    fun updateHourlyRate(parkingSpotId: String, pricePerHour: String): ParkingSpot {
+    fun updateHourlyRate(parkingSpotId: String, pricePerHour: String): ParkingSpotModel {
         return parkingSpotService.updateHourlyRate(parkingSpotId, pricePerHour)
     }
 
@@ -146,7 +146,7 @@ class ParkingSpotController(private val parkingSpotService: IParkingSpotService)
      * @throws NoSuchElementException if parking spot not found
      * @throws Exception if update fails
      */
-    fun updateRestrictions(parkingSpotId: String, restrictions: String): ParkingSpot {
+    fun updateRestrictions(parkingSpotId: String, restrictions: String): ParkingSpotModel {
         return parkingSpotService.updateRestrictions(parkingSpotId, restrictions)
     }
 
@@ -158,7 +158,7 @@ class ParkingSpotController(private val parkingSpotService: IParkingSpotService)
      * @throws IllegalArgumentException if query is invalid
      * @throws Exception if search fails
      */
-    fun findParkingSpotsByAddress(addressQuery: String): List<ParkingSpot> {
+    fun findParkingSpotsByAddress(addressQuery: String): List<ParkingSpotModel> {
         return parkingSpotService.findParkingSpotsByAddress(addressQuery)
     }
 }

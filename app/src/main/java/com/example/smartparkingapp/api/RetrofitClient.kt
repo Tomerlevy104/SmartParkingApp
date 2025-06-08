@@ -10,8 +10,9 @@ object RetrofitClient {
     // Afeka IP: 172.20.20.96
     // Tomer's iphon IP: 172.20.10.6
     // Dira IP: 192.168.1.125
-    // KfarYona: 192.168.68.102
+    // KfarYona: 192.168.68.107
     // ficus: 172.20.29.215
+    // kirya: 172.20.26.173
     //192.168.56.1
     private const val BASE_URL = "http://172.20.10.6:8081/" // This points to localhost on your computer when running in the Android emulator
 

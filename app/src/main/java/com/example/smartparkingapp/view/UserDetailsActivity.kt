@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.smartparkingapp.R
-import com.example.smartparkingapp.api.UserId
 import com.example.smartparkingapp.controller.UserController
 import com.example.smartparkingapp.databinding.ActivityUserDetailsBinding
 import com.example.smartparkingapp.model.User

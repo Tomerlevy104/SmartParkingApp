@@ -6,7 +6,7 @@ import com.example.smartparkingapp.services.IUserService
 import com.example.smartparkingapp.api.RegisterRequest
 import com.example.smartparkingapp.api.UpdateUserRequest
 import com.example.smartparkingapp.api.RetrofitClient
-import com.example.smartparkingapp.api.UserId
+import com.example.smartparkingapp.model.util.UserId
 
 /**
  * Custom exception for field-specific validation errors
@@ -111,27 +111,26 @@ class UserServiceImpl : IUserService {
 
     override fun updateUser(
         userEmail: String,
-        systemID: String,
+        systemId: String,
         role: String?,
         username: String?,
         avatar: String?
     ): User {
         try {
-            // יצירת אובייקט הבקשה במבנה הנכון
+
             val updateRequest = UpdateUserRequest(
-                userId = UserId(email = userEmail, systemID = systemID),
+                userId = UserId(email = userEmail, systemId = systemId),
                 role = role,
                 username = username,
                 avatar = avatar
             )
 
-            // הדפסת מידע לוג
             println("Updating user: $userEmail")
             println("With data: $updateRequest")
 
             // Send update request to server
             val response = RetrofitClient.apiService.updateUser(
-                systemID = systemID,
+                systemID = systemId,
                 userEmail = userEmail,
                 updateRequest = updateRequest
             ).execute()

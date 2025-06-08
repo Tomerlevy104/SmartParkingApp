@@ -4,7 +4,7 @@ package com.example.smartparkingapp.model
  * ParkingSpot data model representing an individual parking spot in an urban zone.
  */
 
-data class ParkingSpot(
+data class ParkingSpotModel(
     val id: String = "",
     val restrictions: String = "",
     val occupied: Boolean = false,

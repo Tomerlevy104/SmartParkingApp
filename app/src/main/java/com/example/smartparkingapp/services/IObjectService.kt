@@ -1,20 +1,21 @@
 package com.example.smartparkingapp.services
 
-import com.example.smartparkingapp.model.UrbanZone
+import com.example.smartparkingapp.model.BaseObjectModel
+import com.example.smartparkingapp.model.UrbanZoneModel
 
 /**
  * Service interface for urban zone-related operations.
  * This service handles business logic related to urban zones.
  */
 
-interface IUrbanZoneService {
+interface IObjectService {
     /**
      * Retrieves all urban zones
      *
      * @return List of all urban zones
      * @throws Exception if retrieval fails
      */
-    fun getAllUrbanZones(): List<UrbanZone>
+    fun getAllUrbanZones(userEmail: String): List<UrbanZoneModel>
 
     /**
      * Creates a new urban zone
@@ -24,7 +25,7 @@ interface IUrbanZoneService {
      * @throws IllegalArgumentException if parameters are invalid
      * @throws Exception if creation fails
      */
-    fun createUrbanZone(urbanZone: UrbanZone): UrbanZone
+//    fun createUrbanZone(urbanZone: UrbanZone): UrbanZone
 
     /**
      * Retrieves an urban zone by its ID
@@ -35,29 +36,9 @@ interface IUrbanZoneService {
      * @throws NoSuchElementException if urban zone not found
      * @throws Exception if retrieval fails
      */
-    fun getUrbanZoneById(urbanZoneId: String): UrbanZone
+//    fun getUrbanZoneById(urbanZoneId: String): UrbanZone
 
-    /**
-     * Updates an existing urban zone
-     *
-     * @param urbanZone The urban zone with updated information
-     * @return The updated urban zone
-     * @throws IllegalArgumentException if parameters are invalid
-     * @throws NoSuchElementException if urban zone not found
-     * @throws Exception if update fails
-     */
-    fun updateUrbanZone(urbanZone: UrbanZone): UrbanZone
 
-    /**
-     * Deletes an urban zone by its ID
-     *
-     * @param urbanZoneId The ID of the urban zone to delete
-     * @return Boolean indicating if deletion was successful
-     * @throws IllegalArgumentException if ID is invalid
-     * @throws NoSuchElementException if urban zone not found
-     * @throws Exception if deletion fails
-     */
-    fun deleteUrbanZone(urbanZoneId: String): Boolean
 
     /**
      * Finds urban zones near a specific location
@@ -69,7 +50,7 @@ interface IUrbanZoneService {
      * @throws IllegalArgumentException if parameters are invalid
      * @throws Exception if search fails
      */
-    fun findNearbyUrbanZones(latitude: Double, longitude: Double, radiusInMeters: Float): List<UrbanZone>
+//    fun findNearbyUrbanZones(latitude: Double, longitude: Double, radiusInMeters: Float): List<UrbanZone>
 
     /**
      * Updates the available parking spots count for an urban zone
@@ -81,7 +62,7 @@ interface IUrbanZoneService {
      * @throws NoSuchElementException if urban zone not found
      * @throws Exception if update fails
      */
-    fun updateAvailableParkingSpots(urbanZoneId: String, availableSpots: Int): UrbanZone
+//    fun updateAvailableParkingSpots(urbanZoneId: String, availableSpots: Int): UrbanZone
 
     /**
      * Updates the hourly rate for an urban zone
@@ -93,7 +74,7 @@ interface IUrbanZoneService {
      * @throws NoSuchElementException if urban zone not found
      * @throws Exception if update fails
      */
-    fun updateHourlyRate(urbanZoneId: String, hourlyRate: Double): UrbanZone
+//    fun updateHourlyRate(urbanZoneId: String, hourlyRate: Double): UrbanZone
 
     /**
      * Retrieves statistics for an urban zone
@@ -104,5 +85,5 @@ interface IUrbanZoneService {
      * @throws NoSuchElementException if urban zone not found
      * @throws Exception if retrieval fails
      */
-    fun getUrbanZoneStatistics(urbanZoneId: String): Map<String, Any>
+//    fun getUrbanZoneStatistics(urbanZoneId: String): Map<String, Any>
 }

@@ -1,6 +1,6 @@
 package com.example.smartparkingapp.services
 
-import com.example.smartparkingapp.model.ParkingSpot
+import com.example.smartparkingapp.model.ParkingSpotModel
 
 /**
  * Service interface for parking spot-related operations.
@@ -13,7 +13,7 @@ interface IParkingSpotService {
      * @return List of all parking spots
      * @throws Exception if retrieval fails
      */
-    fun getAllParkingSpots(): List<ParkingSpot>
+    fun getAllParkingSpots(): List<ParkingSpotModel>
 
     /**
      * Retrieves all parking spots for a specific urban zone
@@ -23,7 +23,7 @@ interface IParkingSpotService {
      * @throws IllegalArgumentException if ID is invalid
      * @throws Exception if retrieval fails
      */
-    fun getParkingSpotsByUrbanZone(urbanZoneId: String): List<ParkingSpot>
+    fun getParkingSpotsByUrbanZone(urbanZoneId: String): List<ParkingSpotModel>
 
     /**
      * Retrieves available (unoccupied) parking spots for a specific urban zone
@@ -33,7 +33,7 @@ interface IParkingSpotService {
      * @throws IllegalArgumentException if ID is invalid
      * @throws Exception if retrieval fails
      */
-    fun getAvailableParkingSpots(urbanZoneId: String): List<ParkingSpot>
+    fun getAvailableParkingSpots(urbanZoneId: String): List<ParkingSpotModel>
 
     /**
      * Retrieves a parking spot by its ID
@@ -44,7 +44,7 @@ interface IParkingSpotService {
      * @throws NoSuchElementException if parking spot not found
      * @throws Exception if retrieval fails
      */
-    fun getParkingSpotById(parkingSpotId: String): ParkingSpot
+    fun getParkingSpotById(parkingSpotId: String): ParkingSpotModel
 
     /**
      * Creates a new parking spot
@@ -54,7 +54,7 @@ interface IParkingSpotService {
      * @throws IllegalArgumentException if parameters are invalid
      * @throws Exception if creation fails
      */
-    fun createParkingSpot(parkingSpot: ParkingSpot): ParkingSpot
+    fun createParkingSpot(parkingSpot: ParkingSpotModel): ParkingSpotModel
 
     /**
      * Updates an existing parking spot
@@ -65,7 +65,7 @@ interface IParkingSpotService {
      * @throws NoSuchElementException if parking spot not found
      * @throws Exception if update fails
      */
-    fun updateParkingSpot(parkingSpot: ParkingSpot): ParkingSpot
+    fun updateParkingSpot(parkingSpot: ParkingSpotModel): ParkingSpotModel
 
     /**
      * Deletes a parking spot by its ID
@@ -88,7 +88,7 @@ interface IParkingSpotService {
      * @throws NoSuchElementException if parking spot not found
      * @throws Exception if update fails
      */
-    fun setOccupancyStatus(parkingSpotId: String, isOccupied: Boolean): ParkingSpot
+    fun setOccupancyStatus(parkingSpotId: String, isOccupied: Boolean): ParkingSpotModel
 
     /**
      * Finds the nearest available parking spots
@@ -100,7 +100,7 @@ interface IParkingSpotService {
      * @throws IllegalArgumentException if parameters are invalid
      * @throws Exception if search fails
      */
-    fun findNearestAvailableSpots(latitude: Double, longitude: Double, limit: Int): List<ParkingSpot>
+    fun findNearestAvailableSpots(latitude: Double, longitude: Double, limit: Int): List<ParkingSpotModel>
 
     /**
      * Updates the hourly rate for a specific parking spot
@@ -112,7 +112,7 @@ interface IParkingSpotService {
      * @throws NoSuchElementException if parking spot not found
      * @throws Exception if update fails
      */
-    fun updateHourlyRate(parkingSpotId: String, pricePerHour: String): ParkingSpot
+    fun updateHourlyRate(parkingSpotId: String, pricePerHour: String): ParkingSpotModel
 
     /**
      * Updates restrictions for a specific parking spot
@@ -124,7 +124,7 @@ interface IParkingSpotService {
      * @throws NoSuchElementException if parking spot not found
      * @throws Exception if update fails
      */
-    fun updateRestrictions(parkingSpotId: String, restrictions: String): ParkingSpot
+    fun updateRestrictions(parkingSpotId: String, restrictions: String): ParkingSpotModel
 
     /**
      * Finds parking spots by address or partial address
@@ -134,5 +134,5 @@ interface IParkingSpotService {
      * @throws IllegalArgumentException if query is invalid
      * @throws Exception if search fails
      */
-    fun findParkingSpotsByAddress(addressQuery: String): List<ParkingSpot>
+    fun findParkingSpotsByAddress(addressQuery: String): List<ParkingSpotModel>
 }
