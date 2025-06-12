@@ -6,7 +6,7 @@ package com.example.smartparkingapp.model
 
 data class UserModel(
     val email: String = "",
-    val username: String = "",
+    var username: String = "",
     var role: String = "",
     var avatar: String = ""
 )

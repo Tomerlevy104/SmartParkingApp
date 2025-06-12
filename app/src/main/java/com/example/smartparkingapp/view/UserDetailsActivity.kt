@@ -21,8 +21,8 @@ class UserDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUserDetailsBinding
     private lateinit var userController: UserController
     private var currentUser: UserModel? = null
-    private var selectedAvatar: String = "default"
     private val SYSTEMID: String = "2025b.integrative.smartParking"
+    private var selectedAvatar: String = "default"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class UserDetailsActivity : AppCompatActivity() {
         setupAvatarDropdown()
         setupListeners()
 
-        // Get current user from service (not from Intent)
+        // Load user from server instead of intent
         getCurrentUserFromService()
     }
 
@@ -47,112 +47,51 @@ class UserDetailsActivity : AppCompatActivity() {
     }
 
     /**
-     * Get current user from UserService instead of Intent
+     * Get current user from UserService
      */
     private fun getCurrentUserFromService() {
-        // Try to get from service first
-        currentUser = getUserFromIntent()
-        Log.d("UserDetailsActivity", "currentUser:{$currentUser.email}")
-        if (currentUser == null) {
-            // Fallback to Intent data if service doesn't have user
-            getUserFromIntent()
-        }
-
-        if (currentUser != null) {
-            Log.d("UserDetailsActivity", "Got user: ${currentUser!!.email}")
-            displayUserDetails(currentUser!!)
-        } else {
-            Toast.makeText(
-                this,
-                "Error: No user information available",
-                Toast.LENGTH_LONG
-            ).show()
-            finish()
-        }
-    }
-
-    /**
-     * Get user details from intent extras
-     */
-//    private fun getUserFromIntent() {
-//        val email = intent.getStringExtra("USER_EMAIL")
-//        val username = intent.getStringExtra("USER_USERNAME")
-//        val role = intent.getStringExtra("USER_ROLE")
-//        val avatar = intent.getStringExtra("USER_AVATAR")
-//
-//        if (email != null && username != null && role != null) {
-//            currentUser = UserModel(
-//                email = email,
-//                username = username,
-//                role = role,
-//                avatar = avatar ?: "default"
-//            )
-//
-//            Log.d("UserDetailsActivity", "Got user from intent: email=$email, username=$username, role=$role, avatar=$avatar")
-//        }
-//    }
-    private fun getUserFromIntent(): UserModel? {
         val email = intent.getStringExtra("USER_EMAIL")
-        val username = intent.getStringExtra("USER_USERNAME")
-        val role = intent.getStringExtra("USER_ROLE")
-        val avatar = intent.getStringExtra("USER_AVATAR")
 
-        return if (email != null && username != null && role != null) {
-            val user = UserModel(
-                email = email,
-                username = username,
-                role = role,
-                avatar = avatar ?: "default"
-            )
-
-            Log.d(
-                "UserDetailsActivity",
-                "Got user from intent: email=$email, username=$username, role=$role, avatar=$avatar"
-            )
-            user
-        } else {
-            Log.d("UserDetailsActivity", "Failed to get user from intent - missing required data")
-            null
+        if (email == null) {
+            Toast.makeText(this, "Error: No email provided", Toast.LENGTH_SHORT).show()
+            finish()
+            return
         }
-    }
 
-    /**
-     * Setup the role dropdown with available roles
-     */
-    private fun setupRoleDropdown() {
-        val roles = arrayOf("ADMIN", "OPERATOR", "END_USER")
-        val adapter = ArrayAdapter(this, R.layout.dropdown_item, roles)
-        binding.dropdownRole.setAdapter(adapter)
-    }
+        showLoading(true)
 
-    /**
-     * Setup the avatar dropdown with available avatars and preview
-     */
-    private fun setupAvatarDropdown() {
-        val avatars = arrayOf("boy", "girl", "man", "woman")
-        val adapter = ArrayAdapter(this, R.layout.dropdown_item, avatars)
-        binding.dropdownAvatar.setAdapter(adapter)
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                currentUser = userController.login(SYSTEMID, email)
 
-        // Handle avatar selection
-        binding.dropdownAvatar.setOnItemClickListener { _, _, position, _ ->
-            val selectedAvatarName = avatars[position]
-            selectedAvatar = selectedAvatarName
-            updateAvatarPreview(selectedAvatarName)
+                withContext(Dispatchers.Main) {
+                    hideLoading()
+
+                    if (currentUser != null) {
+                        Log.d("UserDetailsActivity", "Got user: ${currentUser!!.email}")
+                        displayUserDetails(currentUser!!)
+                    } else {
+                        Toast.makeText(
+                            this@UserDetailsActivity,
+                            "Error: Login failed",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        finish()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    hideLoading()
+                    Log.e("UserDetailsActivity", "Login failed: ${e.message}", e)
+                    Toast.makeText(
+                        this@UserDetailsActivity,
+                        "Error: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                }
+            }
         }
-    }
-
-    /**
-     * Update the avatar preview image based on selected avatar name
-     */
-    private fun updateAvatarPreview(avatarName: String) {
-        val resourceId = when (avatarName) {
-            "boy" -> R.drawable.avatar_boy
-            "girl" -> R.drawable.avatar_girl
-            "man" -> R.drawable.avatar_man
-            "woman" -> R.drawable.avatar_woman
-            else -> R.drawable.avatar_default
-        }
-        binding.ivAvatarPreview.setImageResource(resourceId)
     }
 
     /**
@@ -172,10 +111,10 @@ class UserDetailsActivity : AppCompatActivity() {
      * Display user details in the UI
      */
     private fun displayUserDetails(user: UserModel) {
-        // Email (read-only)
+        // Email
         binding.tvEmailValue.text = user.email
 
-        // Username (editable)
+        // Username
         binding.etUsername.setText(user.username)
 
         // Role
@@ -188,7 +127,7 @@ class UserDetailsActivity : AppCompatActivity() {
     }
 
     /**
-     * Update user details to server
+     * Update user details in server
      */
     private fun updateUser() {
         val updatedRole = binding.dropdownRole.text.toString().trim()
@@ -216,7 +155,7 @@ class UserDetailsActivity : AppCompatActivity() {
             Toast.makeText(
                 this@UserDetailsActivity,
                 "Error: User email is missing",
-                Toast.LENGTH_LONG
+                Toast.LENGTH_SHORT
             ).show()
             return
         }
@@ -230,8 +169,8 @@ class UserDetailsActivity : AppCompatActivity() {
                     "Updating user - email: $userEmail, username: $updatedUsername, role: $updatedRole, avatar: $updatedAvatar"
                 )
 
-                // Update user profile
-                val updatedUser = userController.updateUser(
+                // Update user profile in server side
+                userController.updateUser(
                     userEmail = userEmail,
                     systemID = SYSTEMID,
                     role = updatedRole,
@@ -239,28 +178,18 @@ class UserDetailsActivity : AppCompatActivity() {
                     avatar = updatedAvatar
                 )
 
-                //פה זה עף לי!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//                Log.d("UserDetailsActivity","updated user: {${updatedUser.email},${updatedUser.username},${updatedUser.avatar},${updatedUser.role}")
-
                 withContext(Dispatchers.Main) {
                     hideLoading()
-
-                    // Update current user reference
-//                    currentUser = updatedUser
-                    Log.d("UserDetailsActivity","${currentUser!!.email},${currentUser!!.role},${currentUser!!.avatar}, ${currentUser!!.username}")
-                    // Refresh the UI with updated data
-                    //displayUserDetails(currentUser)
-
                     Toast.makeText(
                         this@UserDetailsActivity,
                         "Profile updated successfully!",
                         Toast.LENGTH_SHORT
                     ).show()
 
-//                    Log.d(
-//                        "UserDetailsActivity",
-//                        "Profile updated successfully: ${updatedUser.email}, ${updatedUser.username}"
-//                    )
+                    Log.d(
+                        "UserDetailsActivity",
+                        "Profile updated successfully: ${currentUser!!.email}, ${currentUser!!.username}"
+                    )
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -277,13 +206,57 @@ class UserDetailsActivity : AppCompatActivity() {
     }
 
     /**
+     * Setup the role dropdown with available roles
+     */
+    private fun setupRoleDropdown() {
+        val roles = arrayOf("ADMIN", "OPERATOR", "END_USER")
+        val adapter = ArrayAdapter(this, R.layout.dropdown_item, roles)
+        binding.dropdownRole.setAdapter(adapter)
+    }
+
+    /**
+     * Update the avatar preview image based on selected avatar name
+     */
+    private fun updateAvatarPreview(avatarName: String) {
+        val resourceId = when (avatarName) {
+            "boy" -> R.drawable.avatar_boy
+            "girl" -> R.drawable.avatar_girl
+            "man" -> R.drawable.avatar_man
+            "woman" -> R.drawable.avatar_woman
+            else -> R.drawable.avatar_default
+        }
+        binding.ivAvatarPreview.setImageResource(resourceId)
+    }
+
+    /**
+     * Setup the avatar dropdown with available avatars and preview
+     */
+    private fun setupAvatarDropdown() {
+        val avatars = arrayOf("boy", "girl", "man", "woman")
+        val adapter = ArrayAdapter(this, R.layout.dropdown_item, avatars)
+        binding.dropdownAvatar.setAdapter(adapter)
+
+        // Handle avatar selection
+        binding.dropdownAvatar.setOnItemClickListener { _, _, position, _ ->
+            val selectedAvatarName = avatars[position]
+            selectedAvatar = selectedAvatarName
+            updateAvatarPreview(selectedAvatarName)
+        }
+    }
+
+    /**
      * Show loading indicator
      */
     private fun showLoading(show: Boolean) {
         if (show) {
             binding.progressBar.visibility = View.VISIBLE
             binding.btnSave.isEnabled = false
-            binding.btnSave.text = "Saving..."
+            binding.btnSave.text = "Loading..."
+
+            // Disable all input fields during loading
+            binding.etUsername.isEnabled = false
+            binding.dropdownRole.isEnabled = false
+            binding.dropdownAvatar.isEnabled = false
         }
     }
 
@@ -294,5 +267,10 @@ class UserDetailsActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.GONE
         binding.btnSave.isEnabled = true
         binding.btnSave.text = getString(R.string.save)
+
+        // Re-enable all input fields
+        binding.etUsername.isEnabled = true
+        binding.dropdownRole.isEnabled = true
+        binding.dropdownAvatar.isEnabled = true
     }
 }

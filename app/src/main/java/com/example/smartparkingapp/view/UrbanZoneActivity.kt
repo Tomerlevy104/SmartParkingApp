@@ -316,15 +316,13 @@ class UrbanZoneActivity : AppCompatActivity() {
 
         // Navigate to UserDetailsActivity when user details button is clicked
         binding.userDetailsBTN.setOnClickListener {
-            Log.d("UrbanZoneActivity", "Current user before intent: ${currentUser?.email}, ${currentUser?.username}, ${currentUser?.role}")
+            Log.d("UrbanZoneActivity", "Navigating to UserDetailsActivity")
 
             val intent = Intent(this, UserDetailsActivity::class.java)
 
+            // Only pass the email - UserDetailsActivity will load full user data from server
             currentUser?.let { user ->
                 intent.putExtra("USER_EMAIL", user.email)
-                intent.putExtra("USER_USERNAME", user.username)
-                intent.putExtra("USER_ROLE", user.role)
-                intent.putExtra("USER_AVATAR", user.avatar)
             }
 
             startActivity(intent)
