@@ -70,5 +70,8 @@
     <string name="role_end_user">End User</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="total">Total:</string>
+    <string name="available">Available:</string>
+    <string name="navigate">Navigate</string>
 
 </resources>

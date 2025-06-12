@@ -1,6 +1,6 @@
 package com.example.smartparkingapp.services
 
-import com.example.smartparkingapp.model.User
+import com.example.smartparkingapp.model.UserModel
 
 interface IUserService {
 
@@ -13,7 +13,7 @@ interface IUserService {
      * @throws IllegalArgumentException if parameters are invalid
      * @throws Exception if authentication fails for other reasons
      */
-    fun login(systemId: String, email: String): User
+    fun login(systemId: String, email: String): UserModel
 
     /**
      * Registers a new user with the provided information
@@ -26,8 +26,7 @@ interface IUserService {
      * @throws IllegalArgumentException if parameters are invalid
      * @throws Exception if registration fails for other reasons
      */
-    fun register(email: String, role: String, username: String, avatar: String): User
-
+    fun register(email: String, role: String, username: String, avatar: String): UserModel
 
     /**
      * Updates a specific user's profile
@@ -47,17 +46,17 @@ interface IUserService {
         role: String? = null,
         username: String? = null,
         avatar: String? = null
-    ): User
+    )
 
 //    fun refreshCurrentUserProfile(currentUser: User): User
-    fun refreshCurrentUserProfile(): User
+    fun refreshCurrentUserProfile(): UserModel
 
     /**
      * Gets the currently logged in user, if any
      *
      * @return The current User object, or null if no user is logged in
      */
-    fun getCurrentUser(): User?
+    fun getCurrentUser(): UserModel?
 
     /**
      * Logs out the current user

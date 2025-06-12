@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.smartparkingapp.R
 import com.example.smartparkingapp.controller.UserController
 import com.example.smartparkingapp.databinding.ActivityRegisterBinding
-import com.example.smartparkingapp.model.User
+import com.example.smartparkingapp.model.UserModel
 import com.example.smartparkingapp.services.impl.UserServiceImpl
 import com.example.smartparkingapp.services.impl.ValidationException
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private var avatarString: String = "default"
     private lateinit var userController: UserController
-    private var currentUser: User? = null
+    private var currentUser: UserModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,8 +108,8 @@ class RegisterActivity : AppCompatActivity() {
                 // Call Controller - it will handle validation
                 val user = userController.register(email, role, username, avatarString)
 
-//                // Store the registered user
-//                currentUser = user
+                // Store the registered user
+                currentUser = user
 
 
                 // Return to Main thread to update UI

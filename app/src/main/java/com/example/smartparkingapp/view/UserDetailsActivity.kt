@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.smartparkingapp.R
 import com.example.smartparkingapp.controller.UserController
 import com.example.smartparkingapp.databinding.ActivityUserDetailsBinding
-import com.example.smartparkingapp.model.User
+import com.example.smartparkingapp.model.UserModel
 import com.example.smartparkingapp.services.impl.UserServiceImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,9 +20,9 @@ class UserDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserDetailsBinding
     private lateinit var userController: UserController
-    private var currentUser: User? = null
+    private var currentUser: UserModel? = null
     private var selectedAvatar: String = "default"
-    private val SYSTEMID : String = "2025b.integrative.smartParking"
+    private val SYSTEMID: String = "2025b.integrative.smartParking"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,24 +34,8 @@ class UserDetailsActivity : AppCompatActivity() {
         setupAvatarDropdown()
         setupListeners()
 
-        // Getting user data from the Intent
-        getUserFromIntent()
-
-        // הצגת נתוני המשתמש בממשק ושמירה בשירות
-        if (currentUser != null) {
-//            // שמירת המשתמש הנוכחי בשירות
-//            userController.setCurrentUser(currentUser!!)
-            Log.d("UserDetailsActivity", "onCreate before displayUserDetails")
-            displayUserDetails(currentUser!!)
-        } else {
-            // No user loged in
-            Toast.makeText(
-                this,
-                "Error: No user information found in Intent",
-                Toast.LENGTH_LONG
-            ).show()
-            finish()
-        }
+        // Get current user from service (not from Intent)
+        getCurrentUserFromService()
     }
 
     /**
@@ -60,6 +44,76 @@ class UserDetailsActivity : AppCompatActivity() {
     private fun initializeController() {
         val userService = UserServiceImpl()
         userController = UserController(userService)
+    }
+
+    /**
+     * Get current user from UserService instead of Intent
+     */
+    private fun getCurrentUserFromService() {
+        // Try to get from service first
+        currentUser = getUserFromIntent()
+        Log.d("UserDetailsActivity", "currentUser:{$currentUser.email}")
+        if (currentUser == null) {
+            // Fallback to Intent data if service doesn't have user
+            getUserFromIntent()
+        }
+
+        if (currentUser != null) {
+            Log.d("UserDetailsActivity", "Got user: ${currentUser!!.email}")
+            displayUserDetails(currentUser!!)
+        } else {
+            Toast.makeText(
+                this,
+                "Error: No user information available",
+                Toast.LENGTH_LONG
+            ).show()
+            finish()
+        }
+    }
+
+    /**
+     * Get user details from intent extras
+     */
+//    private fun getUserFromIntent() {
+//        val email = intent.getStringExtra("USER_EMAIL")
+//        val username = intent.getStringExtra("USER_USERNAME")
+//        val role = intent.getStringExtra("USER_ROLE")
+//        val avatar = intent.getStringExtra("USER_AVATAR")
+//
+//        if (email != null && username != null && role != null) {
+//            currentUser = UserModel(
+//                email = email,
+//                username = username,
+//                role = role,
+//                avatar = avatar ?: "default"
+//            )
+//
+//            Log.d("UserDetailsActivity", "Got user from intent: email=$email, username=$username, role=$role, avatar=$avatar")
+//        }
+//    }
+    private fun getUserFromIntent(): UserModel? {
+        val email = intent.getStringExtra("USER_EMAIL")
+        val username = intent.getStringExtra("USER_USERNAME")
+        val role = intent.getStringExtra("USER_ROLE")
+        val avatar = intent.getStringExtra("USER_AVATAR")
+
+        return if (email != null && username != null && role != null) {
+            val user = UserModel(
+                email = email,
+                username = username,
+                role = role,
+                avatar = avatar ?: "default"
+            )
+
+            Log.d(
+                "UserDetailsActivity",
+                "Got user from intent: email=$email, username=$username, role=$role, avatar=$avatar"
+            )
+            user
+        } else {
+            Log.d("UserDetailsActivity", "Failed to get user from intent - missing required data")
+            null
+        }
     }
 
     /**
@@ -102,36 +156,6 @@ class UserDetailsActivity : AppCompatActivity() {
     }
 
     /**
-     * Get user details from intent extras
-     */
-    private fun getUserFromIntent() {
-        // Getting all the data from the Intent
-        val email = intent.getStringExtra("USER_EMAIL")
-        val username = intent.getStringExtra("USER_USERNAME")
-        val role = intent.getStringExtra("USER_ROLE")
-        val avatar = intent.getStringExtra("USER_AVATAR")
-
-        if (email != null && username != null && role != null) {
-            currentUser = User(
-                email = email,
-                username = username,
-                role = role,
-                avatar = avatar ?: "default"
-            )
-
-            Log.d(
-                "UserDetailsActivity",
-                "Received from intent: email=$email, username=$username, role=$role, avatar=$avatar"
-            )
-        } else {
-            Log.d(
-                "UserDetailsActivity",
-                "Missing user data in Intent: email=$email, username=$username, role=$role"
-            )
-        }
-    }
-
-    /**
      * Setup click listeners for buttons
      */
     private fun setupListeners() {
@@ -147,13 +171,16 @@ class UserDetailsActivity : AppCompatActivity() {
     /**
      * Display user details in the UI
      */
-    private fun displayUserDetails(user: User) {
-        // Email
+    private fun displayUserDetails(user: UserModel) {
+        // Email (read-only)
         binding.tvEmailValue.text = user.email
-        // Username
-        binding.tvUsernameValue.text = user.username
+
+        // Username (editable)
+        binding.etUsername.setText(user.username)
+
         // Role
         binding.dropdownRole.setText(user.role, false)
+
         // Avatar
         selectedAvatar = user.avatar
         binding.dropdownAvatar.setText(user.avatar, false)
@@ -165,11 +192,22 @@ class UserDetailsActivity : AppCompatActivity() {
      */
     private fun updateUser() {
         val updatedRole = binding.dropdownRole.text.toString().trim()
-        val updatedUsername = binding.tvUsernameValue.text.toString().trim()
+        val updatedUsername = binding.etUsername.text.toString().trim()
         val updatedAvatar = selectedAvatar
 
+        // Validation
         if (updatedRole.isEmpty()) {
             binding.dropdownRole.error = "Please select a role"
+            return
+        }
+
+        if (updatedUsername.isEmpty()) {
+            binding.etUsername.error = "Username cannot be empty"
+            return
+        }
+
+        if (updatedUsername.length < 3) {
+            binding.etUsername.error = "Username must be at least 3 characters"
             return
         }
 
@@ -188,11 +226,11 @@ class UserDetailsActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 Log.d(
-                    "UserDetailActivity",
-                    "Saving user details - email: $userEmail, role: $updatedRole, avatar: $updatedAvatar"
+                    "UserDetailsActivity",
+                    "Updating user - email: $userEmail, username: $updatedUsername, role: $updatedRole, avatar: $updatedAvatar"
                 )
 
-                // עדכון פרופיל המשתמש
+                // Update user profile
                 val updatedUser = userController.updateUser(
                     userEmail = userEmail,
                     systemID = SYSTEMID,
@@ -201,16 +239,28 @@ class UserDetailsActivity : AppCompatActivity() {
                     avatar = updatedAvatar
                 )
 
+                //פה זה עף לי!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//                Log.d("UserDetailsActivity","updated user: {${updatedUser.email},${updatedUser.username},${updatedUser.avatar},${updatedUser.role}")
+
                 withContext(Dispatchers.Main) {
                     hideLoading()
+
+                    // Update current user reference
+//                    currentUser = updatedUser
+                    Log.d("UserDetailsActivity","${currentUser!!.email},${currentUser!!.role},${currentUser!!.avatar}, ${currentUser!!.username}")
+                    // Refresh the UI with updated data
+                    //displayUserDetails(currentUser)
+
                     Toast.makeText(
                         this@UserDetailsActivity,
                         "Profile updated successfully!",
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    // סגירת אקטיביטי וחזרה למסך הקודם
-                    finish()
+//                    Log.d(
+//                        "UserDetailsActivity",
+//                        "Profile updated successfully: ${updatedUser.email}, ${updatedUser.username}"
+//                    )
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -220,6 +270,7 @@ class UserDetailsActivity : AppCompatActivity() {
                         "Failed to update profile: ${e.message}",
                         Toast.LENGTH_LONG
                     ).show()
+                    Log.e("UserDetailsActivity", "Update failed: ${e.message}", e)
                 }
             }
         }

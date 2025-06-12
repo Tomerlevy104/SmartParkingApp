@@ -8,7 +8,6 @@
     android:layoutDirection="ltr"
     tools:context=".view.UrbanZoneActivity">
 
-    <!-- Hero Section with Gradient Background -->
     <androidx.cardview.widget.CardView
         android:id="@+id/heroSection"
         android:layout_width="match_parent"
@@ -149,7 +148,6 @@
                         app:boxStrokeColor="@color/app_blue"
                         app:boxStrokeWidth="2dp"
                         app:hintTextColor="@color/app_blue"
-                        app:startIconDrawable="@android:drawable/ic_menu_mapmode"
                         app:startIconTint="@color/app_blue">
 
                         <AutoCompleteTextView
@@ -254,7 +252,7 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Available"
+                                        android:text="@string/available"
                                         android:textColor="@color/white"
                                         android:textSize="12sp"
                                         android:alpha="0.8" />
@@ -283,7 +281,7 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Total"
+                                        android:text="@string/total"
                                         android:textColor="@color/white"
                                         android:textSize="12sp"
                                         android:alpha="0.8" />

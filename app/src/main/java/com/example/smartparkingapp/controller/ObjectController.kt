@@ -1,6 +1,7 @@
 package com.example.smartparkingapp.controller
 
 import com.example.smartparkingapp.model.BaseObjectModel
+import com.example.smartparkingapp.model.ParkingSpotModel
 import com.example.smartparkingapp.model.UrbanZoneModel
 import com.example.smartparkingapp.services.IObjectService
 
@@ -21,16 +22,16 @@ class ObjectController(private val objectService: IObjectService) {
     }
 
     /**
-     * Creates a new urban zone
+     * Get all non-occupied parking spots from a specific urban zone
      *
-     * @param urbanZone The urban zone to create
-     * @return The created urban zone with assigned ID
-     * @throws IllegalArgumentException if parameters are invalid
-     * @throws Exception if creation fails
+     * @param userEmail The user's email
+     * @param urbanZoneId The ID of the urban zone
+     * @return List of non-occupied parking spots
+     * @throws Exception if retrieval fails
      */
-//    fun createUrbanZone(urbanZone: UrbanZone): UrbanZone {
-//        return urbanZoneService.createUrbanZone(urbanZone)
-//    }
+    fun getAllNonOccupiedParkingSpotsFromUrbanZone(userEmail: String, urbanZoneId: String): List<ParkingSpotModel> {
+        return objectService.getAllNonOccupiedParkingSpotsFromUrbanZone(userEmail, urbanZoneId)
+    }
 
     /**
      * Updates the available parking spots count for an urban zone

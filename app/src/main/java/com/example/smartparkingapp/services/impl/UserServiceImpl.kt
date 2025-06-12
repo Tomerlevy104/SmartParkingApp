@@ -1,27 +1,20 @@
 package com.example.smartparkingapp.services.impl
 
 import android.util.Log
-import com.example.smartparkingapp.model.User
+import com.example.smartparkingapp.model.UserModel
 import com.example.smartparkingapp.services.IUserService
 import com.example.smartparkingapp.api.RegisterRequest
 import com.example.smartparkingapp.api.UpdateUserRequest
 import com.example.smartparkingapp.api.RetrofitClient
+import com.example.smartparkingapp.api.UserBoundaryResponse
 import com.example.smartparkingapp.model.util.UserId
-
-/**
- * Custom exception for field-specific validation errors
- */
-class ValidationException(
-    val field: String,
-    message: String
-) : Exception(message)
 
 class UserServiceImpl : IUserService {
 
-    private var currentUser: User? = null
+    private var currentUser: UserModel? = null
     private val SYSTEMID: String = "2025b.integrative.smartParking"
 
-    override fun register(email: String, role: String, username: String, avatar: String): User {
+    override fun register(email: String, role: String, username: String, avatar: String): UserModel {
         // Complete input validation with field-specific errors
         validateRegistrationInput(email, username, role)
 
@@ -39,11 +32,15 @@ class UserServiceImpl : IUserService {
 
             // Check if request was successful
             if (response.isSuccessful) {
-                val user = response.body()
+                val serverResponse = response.body()
                     ?: throw Exception("Registration failed: Server returned empty response")
 
-                // Save the new user (optional - if you want them to stay logged in after registration)
+                // Convert server response to UserModel
+                val user = convertServerResponseToUserModel(serverResponse)
+
+                // Save the new user
                 currentUser = user
+                Log.d("UserServiceImpl", "User registered successfully: ${user.email}")
 
                 return user
             } else {
@@ -64,20 +61,32 @@ class UserServiceImpl : IUserService {
         }
     }
 
-    override fun login(systemId: String, email: String): User {
+    override fun login(systemId: String, email: String): UserModel {
         try {
+            Log.d("UserServiceImpl", "Attempting login for: $email with systemId: $systemId")
+
             // Call login API endpoint
             val response = RetrofitClient.apiService.login(systemId, email).execute()
 
             if (response.isSuccessful) {
-                val user = response.body()
+                val serverResponse = response.body()
                     ?: throw Exception("Login failed: Server returned empty response")
+
+                Log.d("UserServiceImpl", "Received response from server: $serverResponse")
+
+                // Convert server response to UserModel
+                val user = convertServerResponseToUserModel(serverResponse)
 
                 // Save the logged in user
                 currentUser = user
+                Log.d("UserServiceImpl", "User logged in successfully: ${user.email}")
+
                 return user
             } else {
                 // Handle server errors
+                val errorBody = response.errorBody()?.string()
+                Log.e("UserServiceImpl", "Login failed: ${response.code()}, Error: $errorBody")
+
                 when (response.code()) {
                     400 -> throw Exception("Invalid login data - check your input")
                     401 -> throw Exception("Authentication failed - invalid credentials")
@@ -87,24 +96,24 @@ class UserServiceImpl : IUserService {
                 }
             }
         } catch (e: Exception) {
+            Log.e("UserServiceImpl", "Login exception: ${e.message}", e)
             // Throw error with clear message
             throw Exception("Login failed: ${e.message}")
         }
     }
 
-    override fun getCurrentUser(): User? {
+    override fun getCurrentUser(): UserModel? {
         return currentUser
     }
 
     override fun logout(): Boolean {
         currentUser = null
+        Log.d("UserServiceImpl", "User logged out")
         return true
     }
 
-//    override fun refreshCurrentUserProfile(currentUser: User ): User {
-    override fun refreshCurrentUserProfile(): User {
-
-    currentUser?.let {
+    override fun refreshCurrentUserProfile(): UserModel {
+        currentUser?.let {
             return login(SYSTEMID, it.email)
         } ?: throw Exception("No logged in user")
     }
@@ -115,18 +124,16 @@ class UserServiceImpl : IUserService {
         role: String?,
         username: String?,
         avatar: String?
-    ): User {
+    ) {
         try {
-
             val updateRequest = UpdateUserRequest(
-                userId = UserId(email = userEmail, systemId = systemId),
+                userId = UserId(email = userEmail, systemID = systemId),
                 role = role,
                 username = username,
                 avatar = avatar
             )
 
-            println("Updating user: $userEmail")
-            println("With data: $updateRequest")
+            Log.d("UserServiceImpl", "Updating user: $userEmail with data: $updateRequest")
 
             // Send update request to server
             val response = RetrofitClient.apiService.updateUser(
@@ -134,20 +141,18 @@ class UserServiceImpl : IUserService {
                 userEmail = userEmail,
                 updateRequest = updateRequest
             ).execute()
+            Log.d("UserServiceImpl","${response}")
 
             // Response from server
             if (response.isSuccessful) {
-                // שרת ה-Spring מחזיר 204 No Content בהצלחה
-//                currentUser?.email ?: userEmail
-//                currentUser?.username ?: username
-//                currentUser?.avatar ?: avatar
-//                currentUser?.role ?: role
-                return refreshCurrentUserProfile()
+                Log.d("UserServiceImpl", "User updated successfully, refreshing profile")
+                currentUser?.avatar ?: updateRequest.avatar
+                currentUser?.username ?: updateRequest.username
+                currentUser?.role ?: updateRequest.role
             } else {
                 // Print error
-                Log.d("UserServiceImpl","Server responded with error code: ${response.code()}")
-                Log.d("UserServiceImpl","Response message: ${response.message()}")
-                Log.d("UserServiceImpl","Response errorBody: ${response.errorBody()?.string()}")
+                val errorBody = response.errorBody()?.string()
+                Log.e("UserServiceImpl", "Update failed: ${response.code()}, Error: $errorBody")
 
                 when (response.code()) {
                     400 -> throw Exception("Invalid update data - check your input")
@@ -158,20 +163,22 @@ class UserServiceImpl : IUserService {
                 }
             }
         } catch (e: Exception) {
-            println("Exception in updateUser: ${e.message}")
-            e.printStackTrace()
+            Log.e("UserServiceImpl", "Update exception: ${e.message}", e)
             throw Exception("Failed to update user profile: ${e.message}")
         }
     }
 
-//    override fun updateUser(
-//        email: String?,
-//        username: String?,
-//        role: String?,
-//        avatar: String?
-//    ): User {
-//
-//    }
+    /**
+     * Convert ServerUserResponse to UserModel
+     */
+    private fun convertServerResponseToUserModel(serverResponse: UserBoundaryResponse): UserModel {
+        return UserModel(
+            email = serverResponse.userId.email,
+            username = serverResponse.username,
+            role = serverResponse.role,
+            avatar = serverResponse.avatar
+        )
+    }
 
     // Helper functions for input validation - throws field-specific errors
     private fun validateRegistrationInput(email: String, username: String, role: String) {
@@ -210,3 +217,11 @@ class UserServiceImpl : IUserService {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }
+
+/**
+ * Custom exception for field-specific validation errors
+ */
+class ValidationException(
+    val field: String,
+    message: String
+) : Exception(message)

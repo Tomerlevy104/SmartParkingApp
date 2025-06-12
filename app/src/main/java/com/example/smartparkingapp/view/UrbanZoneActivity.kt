@@ -21,20 +21,18 @@ import com.example.smartparkingapp.controller.UserController
 import com.example.smartparkingapp.databinding.ActivityUrbanZoneBinding
 import com.example.smartparkingapp.model.ParkingSpotModel
 import com.example.smartparkingapp.model.UrbanZoneModel
-import com.example.smartparkingapp.model.User
+import com.example.smartparkingapp.model.UserModel
 import com.example.smartparkingapp.services.impl.ObjectServiceImpl
 import com.example.smartparkingapp.services.impl.UserServiceImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
-
 class UrbanZoneActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUrbanZoneBinding
     private lateinit var parkingSpotAdapter: ParkingSpotAdapter
-    private var currentUser: User? = null
+    private var currentUser: UserModel? = null
     private lateinit var userController: UserController
     private lateinit var objectController: ObjectController
 
@@ -42,59 +40,8 @@ class UrbanZoneActivity : AppCompatActivity() {
     private var allUrbanZoneArray: List<UrbanZoneModel> = emptyList()
     private var selectedUrbanZone: UrbanZoneModel? = null
 
-    // Sample parking spots list
-    private val sampleParkingSpots = listOf(
-        ParkingSpotModel(
-            id = "P1",
-            restrictions = "2 hour maximum",
-            occupied = false,
-            turnoverRate = "High",
-            address = "12 Dizengoff Street",
-            zoneId = "1",
-            isCovered = true,
-            pricePerHour = "8.00"
-        ),
-        ParkingSpotModel(
-            id = "P2",
-            restrictions = "No restrictions",
-            occupied = false,
-            turnoverRate = "Medium",
-            address = "25 Ben Yehuda Street",
-            zoneId = "1",
-            isCovered = false,
-            pricePerHour = "8.00"
-        ),
-        ParkingSpotModel(
-            id = "P3",
-            restrictions = "4 hour maximum",
-            occupied = false,
-            turnoverRate = "Low",
-            address = "7 Allenby Road",
-            zoneId = "1",
-            isCovered = false,
-            pricePerHour = "7.50"
-        ),
-        ParkingSpotModel(
-            id = "P4",
-            restrictions = "No restrictions",
-            occupied = false,
-            turnoverRate = "Medium",
-            address = "33 King George Street",
-            zoneId = "1",
-            isCovered = true,
-            pricePerHour = "9.00"
-        ),
-        ParkingSpotModel(
-            id = "P5",
-            restrictions = "3 hour maximum",
-            occupied = false,
-            turnoverRate = "Medium",
-            address = "14 Rothschild Boulevard",
-            zoneId = "1",
-            isCovered = false,
-            pricePerHour = "7.00"
-        )
-    )
+    // Current parking spots list from server
+    private var currentParkingSpots: List<ParkingSpotModel> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,7 +87,7 @@ class UrbanZoneActivity : AppCompatActivity() {
             Log.d("UrbanZoneActivity", "Intent extras: email=$email, username=$username, role=$role, avatar=$avatar")
 
             if (email != null && username != null && role != null) {
-                currentUser = User(
+                currentUser = UserModel(
                     email = email,
                     username = username,
                     role = role,
@@ -202,8 +149,13 @@ class UrbanZoneActivity : AppCompatActivity() {
                             "Loaded ${zones.size} urban zones from server",
                             Toast.LENGTH_SHORT
                         ).show()
+
+                        // Load parking spots for the selected zone
+                        selectedUrbanZone?.let { zone ->
+                            loadParkingSpotsForSelectedZone(zone)
+                        }
                     } else {
-                        Log.w("UrbanZoneActivity", "No urban zones found")
+                        Log.d("UrbanZoneActivity", "No urban zones found")
                         Toast.makeText(this@UrbanZoneActivity, "No urban zones found", Toast.LENGTH_SHORT).show()
                         setupDefaultUrbanZone()
                     }
@@ -213,6 +165,57 @@ class UrbanZoneActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@UrbanZoneActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                     setupDefaultUrbanZone()
+                }
+            }
+        }
+    }
+
+    /**
+     * Load parking spots for the selected urban zone
+     */
+    private fun loadParkingSpotsForSelectedZone(zone: UrbanZoneModel) {
+        val userEmail = currentUser?.email
+        if (userEmail == null) {
+            Log.e("UrbanZoneActivity", "No user email available")
+            return
+        }
+
+        val zoneId = zone.getObjectId().objectId
+        Log.d("UrbanZoneActivity", "Loading parking spots for zone: ${zone.getName()} (ID: $zoneId)")
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                // Fetch non-occupied parking spots from server
+                val parkingSpots = objectController.getAllNonOccupiedParkingSpotsFromUrbanZone(userEmail, zoneId)
+                Log.d("UrbanZoneActivity", "Received ${parkingSpots.size} non-occupied parking spots")
+
+                withContext(Dispatchers.Main) {
+                    if (parkingSpots.isNotEmpty()) {
+                        updateParkingSpotsList(parkingSpots)
+                        Toast.makeText(
+                            this@UrbanZoneActivity,
+                            "Found ${parkingSpots.size} available parking spots",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        updateParkingSpotsList(emptyList())
+                        Toast.makeText(
+                            this@UrbanZoneActivity,
+                            "No available parking spots in this zone",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("UrbanZoneActivity", "Error loading parking spots", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@UrbanZoneActivity,
+                        "Error loading parking spots: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    // Show empty list on error
+                    updateParkingSpotsList(emptyList())
                 }
             }
         }
@@ -239,10 +242,25 @@ class UrbanZoneActivity : AppCompatActivity() {
         // Handle item selection
         binding.urbanZoneDropdown.setOnItemClickListener { _, _, position, _ ->
             if (position < allUrbanZoneArray.size) {
+                val previousZone = selectedUrbanZone
                 selectedUrbanZone = allUrbanZoneArray[position]
-                updateUrbanZoneUI()
-                Toast.makeText(this, "Selected: ${zoneNames[position]}", Toast.LENGTH_SHORT).show()
+
                 Log.d("UrbanZoneActivity", "Zone selected: ${zoneNames[position]}")
+                Log.d("UrbanZoneActivity", "Selected zone ObjectId: ${selectedUrbanZone?.getObjectId()?.objectId}")
+
+                // Update UI
+                updateUrbanZoneUI()
+
+                // Load parking spots for the newly selected zone
+                if (selectedUrbanZone != previousZone) {
+
+                    val urbanZone = selectedUrbanZone
+                    if (urbanZone is UrbanZoneModel) {
+                        loadParkingSpotsForSelectedZone(urbanZone)
+                    }
+                }
+
+                Toast.makeText(this, "Selected: ${zoneNames[position]}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -270,9 +288,6 @@ class UrbanZoneActivity : AppCompatActivity() {
             Log.d("UrbanZoneActivity", "Updated UI with UrbanZone: ${zone.getName()}")
             Log.d("UrbanZoneActivity", "Zone occupancy rate: ${zone.getOccupancyRate()}%")
             Log.d("UrbanZoneActivity", "Has available spots: ${zone.hasAvailableSpots()}")
-
-            // Update parking spots list
-            updateParkingSpotsList(sampleParkingSpots.filter { !it.occupied })
         }
     }
 
@@ -285,7 +300,7 @@ class UrbanZoneActivity : AppCompatActivity() {
         binding.tvTotalSpots.text = "120"
         binding.tvAvailableSpots.text = "55"
         binding.tvHourlyRate.text = "₪8.00"
-        updateParkingSpotsList(sampleParkingSpots.filter { !it.occupied })
+        updateParkingSpotsList(emptyList())
     }
 
     // Updates the list of parking spaces displayed in RecyclerView
@@ -324,19 +339,12 @@ class UrbanZoneActivity : AppCompatActivity() {
             Rate: ₪${parkingSpot.pricePerHour} per hour
             Covered: ${if (parkingSpot.isCovered) "Yes" else "No"}
             Turnover Rate: ${parkingSpot.turnoverRate}
+            Zone ID: ${parkingSpot.zoneId}
         """.trimIndent()
 
         AlertDialog.Builder(this)
             .setTitle("Parking Spot Details")
             .setMessage(message)
-//            .setPositiveButton("Navigate") { _, _ ->
-//                Toast.makeText(this, "Navigation will be implemented later", Toast.LENGTH_SHORT)
-//                    .show()
-//            }
-//            .setNegativeButton("Reserve") { _, _ ->
-//                Toast.makeText(this, "Reservation will be implemented later", Toast.LENGTH_SHORT)
-//                    .show()
-//            }
             .setNeutralButton("Cancel", null)
             .show()
     }
@@ -386,24 +394,13 @@ class UrbanZoneActivity : AppCompatActivity() {
 
         inner class ParkingSpotViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             private val tvParkingAddress: TextView = itemView.findViewById(R.id.tvParkingAddress)
-            private val tvParkingRestrictions: TextView =
-                itemView.findViewById(R.id.tvParkingRestrictions)
-            private val tvParkingPrice: TextView = itemView.findViewById(R.id.tvParkingPrice)
-            private val tvParkingCovered: TextView = itemView.findViewById(R.id.tvParkingCovered)
-            private val tvTurnoverRate: TextView = itemView.findViewById(R.id.tvTurnoverRate)
+            private val tvParkingRestrictions: TextView = itemView.findViewById(R.id.tvParkingRestrictions)
             private val btnNavigate: com.google.android.material.button.MaterialButton =
                 itemView.findViewById(R.id.btnNavigate)
 
             fun bind(parkingSpot: ParkingSpotModel) {
                 tvParkingAddress.text = parkingSpot.address
                 tvParkingRestrictions.text = parkingSpot.restrictions
-                tvParkingPrice.text = "₪${parkingSpot.pricePerHour}/hr"
-
-                // Set turnover rate text
-                tvTurnoverRate.text = parkingSpot.turnoverRate
-
-                // Show/hide covered badge
-                tvParkingCovered.visibility = if (parkingSpot.isCovered) View.VISIBLE else View.GONE
 
                 // Navigate button click - Opens navigation dialog
                 btnNavigate.setOnClickListener {

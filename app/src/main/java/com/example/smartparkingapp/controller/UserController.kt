@@ -1,15 +1,15 @@
 package com.example.smartparkingapp.controller
 
-import com.example.smartparkingapp.model.User
+import com.example.smartparkingapp.model.UserModel
 import com.example.smartparkingapp.services.IUserService
 
 class UserController(private val userService: IUserService) {
 
-    fun register(email: String,role: String, username: String, avatar: String): User {
+    fun register(email: String,role: String, username: String, avatar: String): UserModel {
         return userService.register(email, role, username, avatar)
     }
 
-    fun login(systemId: String, email: String): User {
+    fun login(systemId: String, email: String): UserModel {
         return userService.login(systemId, email)
     }
 
@@ -19,25 +19,12 @@ class UserController(private val userService: IUserService) {
         role: String? = null,
         username: String? = null,
         avatar: String? = null
-    ): User {
-        return userService.updateUser(userEmail,systemID,role, username, avatar)
+    ) {
+         userService.updateUser(userEmail,systemID,role, username, avatar)
     }
-//    fun updateUser(
-//        email: String? = null,
-//        username: String? = null,
-//        role: String? = null,
-//        avatar: String? = null
-//    ): User {
-//        return userService.updateUser(email, username, role, avatar)
-//    }
 
-//    // Overloaded login that only needs email (uses a default systemId)
-//    fun login(email: String): User {
-//        return userService.login("2025b.adir.davidov", email)
-//    }
-
-    fun getCurrentUser(): User? {
-        return userService.getCurrentUser()
+    fun getCurrentUser(systemId: String, email: String): UserModel? {
+        return userService.login(systemId, email)
     }
 
     fun logout(): Boolean {
@@ -48,7 +35,7 @@ class UserController(private val userService: IUserService) {
         return userService.getCurrentUser() != null
     }
 
-    fun refreshCurrentUserProfile(): User {
+    fun refreshCurrentUserProfile(): UserModel {
         return userService.refreshCurrentUserProfile()
     }
 

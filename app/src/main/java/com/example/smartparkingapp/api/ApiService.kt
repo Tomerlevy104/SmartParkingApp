@@ -1,21 +1,23 @@
 // api/ApiService.kt - Fix the login method and adapt register for Spring server
 package com.example.smartparkingapp.api
 
-import com.example.smartparkingapp.model.UrbanZoneModel
-import com.example.smartparkingapp.model.User
+import com.example.smartparkingapp.model.util.CommandId
 import com.example.smartparkingapp.model.util.CreatedBy
+import com.example.smartparkingapp.model.util.InvokedBy
 import com.example.smartparkingapp.model.util.ObjectId
+import com.example.smartparkingapp.model.util.TargetObject
 import com.example.smartparkingapp.model.util.UserId
 import retrofit2.Call
 import retrofit2.http.*
+import java.util.Date
 
 interface ApiService {
 
     @GET("ambient-intelligence/users/login/{systemID}/{userEmail}")
-    fun login(@Path("systemID") systemID: String, @Path("userEmail") userEmail: String): Call<User>
+    fun login(@Path("systemID") systemID: String, @Path("userEmail") userEmail: String): Call<UserBoundaryResponse>
 
     @POST("ambient-intelligence/users")
-    fun register(@Body registerRequest: RegisterRequest): Call<User>
+    fun register(@Body registerRequest: RegisterRequest): Call<UserBoundaryResponse>
 
     @PUT("ambient-intelligence/users/{systemID}/{userEmail}")
     fun updateUser(
@@ -32,7 +34,28 @@ interface ApiService {
         @Query("size") size: Int = 15,
         @Query("page") page: Int = 0
     ): Call<Array<Any>>
+
+    @POST("ambient-intelligence/commands")
+    fun executeCommand(
+        @Body commandRequest: CommandRequest
+    ): Call<Any>
 }
+
+data class CommandRequest(
+    val id: CommandId,
+    val command : String,
+    val targetObject : TargetObject,
+    val invocationTimestamp : Date?,
+    val invokedBy: InvokedBy,
+    val commandAttributes: Map<String, Any>
+)
+
+data class UserBoundaryResponse(
+    val userId: UserId,
+    val role: String,
+    val username: String,
+    val avatar: String
+)
 
 data class ObjectBoundaryResponse(
     val objectId: ObjectId,

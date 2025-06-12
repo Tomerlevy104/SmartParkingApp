@@ -104,7 +104,6 @@
                 android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
 
-            <!-- Username Field (Read-only) -->
             <TextView
                 android:id="@+id/tvEmailValue"
                 android:layout_width="match_parent"
@@ -116,24 +115,22 @@
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
-            <TextView
+            <!-- Username Field (Editable) -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/username"
-                android:textColor="@color/app_blue"
-                android:textSize="14sp"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginBottom="16dp"
+                android:hint="@string/username"
+                app:boxStrokeColor="@color/app_blue"
+                app:hintTextColor="@color/app_blue">
 
-            <TextView
-                android:id="@+id/tvUsernameValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/light_gray"
-                android:padding="16dp"
-                android:text="Username"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_marginBottom="16dp" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Role Field (Editable) -->
             <com.google.android.material.textfield.TextInputLayout
