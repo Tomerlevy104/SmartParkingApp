@@ -384,18 +384,38 @@
 
                     </LinearLayout>
 
-                    <!-- RecyclerView with Enhanced Styling -->
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvParkingSpots"
+                    <!-- Content Container for RecyclerView and Empty State -->
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clipToPadding="false"
-                        android:overScrollMode="never"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:paddingBottom="12dp"
-                        android:scrollbars="none"
-                        tools:listitem="@layout/item_parking_spot" />
+                        android:layout_height="match_parent">
+
+                        <!-- RecyclerView with Enhanced Styling -->
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvParkingSpots"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clipToPadding="false"
+                            android:overScrollMode="never"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:paddingBottom="12dp"
+                            android:scrollbars="none"
+                            tools:listitem="@layout/item_parking_spot" />
+
+                        <!-- Empty State TextView -->
+                        <TextView
+                            android:id="@+id/tvEmptyState"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="No available parking spots in this zone"
+                            android:textColor="@color/app_blue"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:visibility="gone"
+                            android:padding="40dp" />
+
+                    </FrameLayout>
 
                 </LinearLayout>
 

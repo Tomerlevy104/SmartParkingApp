@@ -161,11 +161,11 @@ class UrbanZoneActivity : AppCompatActivity() {
                             )
                         }
 
-                        Toast.makeText(
-                            this@UrbanZoneActivity,
-                            "Loaded ${zones.size} urban zones from server",
-                            Toast.LENGTH_SHORT
-                        ).show()
+//                        Toast.makeText(
+//                            this@UrbanZoneActivity,
+//                            "Loaded ${zones.size} urban zones from server",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
 
                         // Load parking spots for the selected zone
                         selectedUrbanZone?.let { zone ->
@@ -223,26 +223,21 @@ class UrbanZoneActivity : AppCompatActivity() {
                 )
 
                 withContext(Dispatchers.Main) {
-                    // עדכון המשתנה הגלובלי עם הנתונים החדשים
+                    // Update the global variable with the new data
                     currentParkingSpots.clear()
                     currentParkingSpots.addAll(parkingSpots)
 
-                    // עדכון UI
+                    // Update UI
                     binding.tvAvailableSpots.text = numberOfAvailableSpots.toString()
                     updateParkingSpotsList()
 
-                    if (parkingSpots.isNotEmpty()) {
-                        Toast.makeText(
-                            this@UrbanZoneActivity,
-                            "Found ${parkingSpots.size} available parking spots",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    // Show/hide empty state
+                    if (parkingSpots.isEmpty()) {
+                        binding.tvEmptyState.visibility = View.VISIBLE
+                        binding.rvParkingSpots.visibility = View.GONE
                     } else {
-                        Toast.makeText(
-                            this@UrbanZoneActivity,
-                            "No available parking spots in this zone",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        binding.tvEmptyState.visibility = View.GONE
+                        binding.rvParkingSpots.visibility = View.VISIBLE
                     }
                 }
             } catch (e: Exception) {
@@ -302,7 +297,7 @@ class UrbanZoneActivity : AppCompatActivity() {
                     }
                 }
 
-                Toast.makeText(this, "Selected: ${zoneNames[position]}", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this, "Selected: ${zoneNames[position]}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -342,9 +337,11 @@ class UrbanZoneActivity : AppCompatActivity() {
         binding.tvAvailableSpots.text = "null"
         binding.tvHourlyRate.text = "null"
 
-        // עדכון המשתנה הגלובלי
         currentParkingSpots.clear()
         updateParkingSpotsList()
+        // Show empty state for default setup
+        binding.tvEmptyState.visibility = View.VISIBLE
+        binding.rvParkingSpots.visibility = View.GONE
     }
 
     /**
@@ -356,7 +353,7 @@ class UrbanZoneActivity : AppCompatActivity() {
     }
 
     /**
-     * Refresh data from server - משופר עם עדכון מהיר יותר
+     * Refresh data from server
      */
     private fun refreshData() {
         Toast.makeText(this, "Refreshing Data...", Toast.LENGTH_SHORT).show()
@@ -373,15 +370,6 @@ class UrbanZoneActivity : AppCompatActivity() {
 
         // Update UI with current zone data
         updateUrbanZoneUI()
-    }
-
-    /**
-     * פונקציה חדשה לעדכון מהיר של נתונים מהמשתנה הגלובלי
-     */
-    private fun updateUIFromCache() {
-        Log.d("UrbanZoneActivity", "Updating UI from cached data")
-        updateParkingSpotsList()
-        binding.tvAvailableSpots.text = currentParkingSpots.size.toString()
     }
 
     private fun setupButtons() {
