@@ -73,5 +73,7 @@
     <string name="total">Total:</string>
     <string name="available">Available:</string>
     <string name="navigate">Navigate</string>
+    <string name="ten">10</string>
+    <string name="Login">Login...</string>
 
 </resources>

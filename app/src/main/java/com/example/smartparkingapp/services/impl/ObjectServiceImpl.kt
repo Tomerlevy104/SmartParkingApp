@@ -12,16 +12,14 @@ import com.example.smartparkingapp.model.util.ObjectId
 import com.example.smartparkingapp.model.util.TargetObject
 import com.example.smartparkingapp.model.util.UserId
 import com.example.smartparkingapp.services.IObjectService
-import com.example.smartparkingapp.utils.ObjectConverter
+import com.example.smartparkingapp.utils.ObjectAndUserConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.util.Date
-import java.util.UUID
 
 class ObjectServiceImpl : IObjectService {
 
     private val SYSTEMID = "2025b.integrative.smartParking"
-    private val objectConverter = ObjectConverter()
+    private val objectConverter = ObjectAndUserConverter()
     private val gson = Gson()
 
     override fun getAllUrbanZones(userEmail: String): List<UrbanZoneModel> {
@@ -39,7 +37,7 @@ class ObjectServiceImpl : IObjectService {
                 Log.d("ObjectService", "Raw response received: ${rawJsonResponse?.size} objects")
 
                 if (rawJsonResponse != null) {
-                    // Conert array to UrbanZoneModel
+                    // Convert array to UrbanZoneModel
                     val urbanZones = rawJsonResponse.mapNotNull { jsonObject ->
                         try {
                             // Convert JSON object to ObjectBoundaryResponse using Gson
@@ -173,44 +171,16 @@ class ObjectServiceImpl : IObjectService {
         }
     }
 
-    private fun convertToParkingSpotModel(boundary: ObjectBoundaryResponse): ParkingSpotModel? {
-        return try {
-            // Check if it's a parking spot type
-            if (boundary.type.lowercase() != "parkingspot") {
-                Log.w("ObjectService", "Object type is not parkingspot: ${boundary.type}")
-                return null
-            }
-
-            val details = boundary.objectDetails
-
-            ParkingSpotModel(
-                id = boundary.objectId.objectId,
-                restrictions = details["restrictions"]?.toString() ?: "",
-                occupied = details["occupied"]?.toString()?.toBoolean() ?: false,
-                turnoverRate = details["turnoverRate"]?.toString() ?: "",
-                address = details["address"]?.toString() ?: "",
-                zoneId = details["zoneId"]?.toString() ?: "",
-                isCovered = details["isCovered"]?.toString()?.toBoolean() ?: false,
-                pricePerHour = details["pricePerHour"]?.toString() ?: ""
-            )
-        } catch (e: Exception) {
-            Log.e("ObjectService", "Error converting to ParkingSpotModel", e)
-            null
-        }
-    }
-
     private fun createObjectBoundaryFromMap(map: Map<String, Any>): ObjectBoundaryResponse {
-        // חילוץ objectId
         val objectIdMap = map["objectId"] as? Map<String, Any> ?: mapOf()
-        val objectIdResponse = com.example.smartparkingapp.model.util.ObjectId(
+        val objectIdResponse = ObjectId(
             systemId = objectIdMap["systemId"]?.toString() ?: "",
             objectId = objectIdMap["objectId"]?.toString() ?: ""
         )
 
-        // חילוץ createdBy
         val createdByMap = map["createdBy"] as? Map<String, Any> ?: mapOf()
         val userIdMap = createdByMap["userId"] as? Map<String, Any> ?: mapOf()
-        val userIdResponse = com.example.smartparkingapp.model.util.UserId(
+        val userIdResponse = UserId(
             email = userIdMap["email"]?.toString() ?: "",
             systemID = userIdMap["systemId"]?.toString() ?: ""
         )
@@ -218,10 +188,9 @@ class ObjectServiceImpl : IObjectService {
             userId = userIdResponse
         )
 
-        // חילוץ objectDetails
         val objectDetails = map["objectDetails"] as? Map<String, Any> ?: mapOf()
 
-        return com.example.smartparkingapp.api.ObjectBoundaryResponse(
+        return ObjectBoundaryResponse(
             objectId = objectIdResponse,
             type = map["type"]?.toString() ?: "",
             alias = map["alias"]?.toString() ?: "",

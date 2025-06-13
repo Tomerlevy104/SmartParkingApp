@@ -46,13 +46,26 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <!-- Refresh Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRefresh"
+                    style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="12dp"
+                    android:backgroundTint="@color/white"
+                    app:icon="@android:drawable/ic_popup_sync"
+                    app:iconTint="@color/app_blue"
+                    app:layout_constraintStart_toEndOf="@id/btnLogout"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <!-- Elegant App Logo -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="56dp"
                     android:layout_height="56dp"
+                    app:cardBackgroundColor="@color/white"
                     app:cardCornerRadius="28dp"
                     app:cardElevation="8dp"
-                    app:cardBackgroundColor="@color/white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -75,12 +88,12 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:text="@string/parking_in_blue_white"
                 android:textColor="@color/white"
                 android:textSize="32sp"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"
                 app:layout_constraintTop_toBottomOf="@id/headerLayout" />
 
             <!-- Subtitle -->
@@ -90,11 +103,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
+                android:alpha="0.9"
                 android:gravity="center"
                 android:text="Smart Parking Solutions"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:alpha="0.9"
                 app:layout_constraintTop_toBottomOf="@id/heroTitle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -103,11 +116,12 @@
 
     <!-- Main Content Container -->
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/heroSection"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigation">
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        app:layout_constraintTop_toBottomOf="@id/heroSection">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -154,10 +168,10 @@
                             android:id="@+id/urbanZoneDropdown"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
                             android:inputType="none"
                             android:text="@string/tel_aviv_yafo"
-                            android:textSize="16sp"
-                            android:fontFamily="sans-serif-medium" />
+                            android:textSize="16sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -168,27 +182,27 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
                         android:background="@drawable/rounded_background_light"
+                        android:fontFamily="sans-serif"
                         android:gravity="center"
                         android:padding="12dp"
                         android:text="@string/main_city_streets"
                         android:textColor="@color/app_blue"
-                        android:textSize="14sp"
-                        android:fontFamily="sans-serif" />
+                        android:textSize="14sp" />
 
                     <!-- Stats Container -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
-                        android:orientation="horizontal"
-                        android:baselineAligned="false">
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
                         <!-- Rate Card -->
                         <com.google.android.material.card.MaterialCardView
                             style="@style/Widget.Material3.CardView.Filled"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
                             android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
                             app:cardBackgroundColor="@color/app_blue"
                             app:cardCornerRadius="16dp"
                             app:cardElevation="6dp">
@@ -196,28 +210,29 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:gravity="center"
                                 android:orientation="vertical"
-                                android:padding="16dp"
-                                android:gravity="center">
+                                android:padding="16dp">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:alpha="0.8"
                                     android:text="@string/hourly_rate"
                                     android:textColor="@color/white"
-                                    android:textSize="12sp"
-                                    android:alpha="0.8" />
+                                    android:textSize="12sp" />
 
                                 <TextView
                                     android:id="@+id/tvHourlyRate"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="4dp"
+                                    android:fontFamily="sans-serif-medium"
                                     android:text="₪8.00"
                                     android:textColor="@color/white"
                                     android:textSize="18sp"
-                                    android:textStyle="bold"
-                                    android:fontFamily="sans-serif-medium" />
+                                    android:textStyle="bold"/>
+
 
                             </LinearLayout>
 
@@ -228,8 +243,8 @@
                             style="@style/Widget.Material3.CardView.Filled"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
                             android:layout_marginStart="8dp"
+                            android:layout_weight="1"
                             app:cardBackgroundColor="@color/app_green"
                             app:cardCornerRadius="16dp"
                             app:cardElevation="6dp">
@@ -237,35 +252,35 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:gravity="center"
                                 android:orientation="vertical"
-                                android:padding="16dp"
-                                android:gravity="center">
+                                android:padding="16dp">
 
                                 <!-- Available Spots Row -->
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical">
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
 
                                     <TextView
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
+                                        android:alpha="0.8"
                                         android:text="@string/available"
                                         android:textColor="@color/white"
-                                        android:textSize="12sp"
-                                        android:alpha="0.8" />
+                                        android:textSize="12sp" />
 
                                     <TextView
                                         android:id="@+id/tvAvailableSpots"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="55"
+                                        android:fontFamily="sans-serif-medium"
+                                        android:text="@string/ten"
                                         android:textColor="@color/white"
                                         android:textSize="18sp"
-                                        android:textStyle="bold"
-                                        android:fontFamily="sans-serif-medium" />
+                                        android:textStyle="bold" />
 
                                 </LinearLayout>
 
@@ -273,28 +288,28 @@
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
                                     android:layout_marginTop="8dp"
-                                    android:gravity="center_vertical">
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
 
                                     <TextView
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
+                                        android:alpha="0.8"
                                         android:text="@string/total"
                                         android:textColor="@color/white"
-                                        android:textSize="12sp"
-                                        android:alpha="0.8" />
+                                        android:textSize="12sp" />
 
                                     <TextView
                                         android:id="@+id/tvTotalSpots"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="120"
+                                        android:fontFamily="sans-serif-medium"
+                                        android:text="@string/ten"
                                         android:textColor="@color/white"
                                         android:textSize="18sp"
-                                        android:textStyle="bold"
-                                        android:fontFamily="sans-serif-medium" />
+                                        android:textStyle="bold" />
 
                                 </LinearLayout>
 
@@ -314,10 +329,10 @@
                 style="@style/Widget.Material3.CardView.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="16dp"
+                android:layout_weight="1"
                 android:minHeight="400dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="8dp"
@@ -332,27 +347,27 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
+                        android:background="@drawable/rounded_top_background"
                         android:gravity="center_vertical"
-                        android:padding="20dp"
-                        android:background="@drawable/rounded_top_background">
+                        android:orientation="horizontal"
+                        android:padding="20dp">
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
                             android:src="@android:drawable/ic_menu_mylocation"
-                            app:tint="@color/app_blue"
-                            android:layout_marginEnd="12dp" />
+                            app:tint="@color/app_blue" />
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:fontFamily="sans-serif-medium"
                             android:text="@string/available_parking_spots"
                             android:textColor="@color/app_blue"
                             android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:fontFamily="sans-serif-medium" />
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -375,11 +390,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:clipToPadding="false"
+                        android:overScrollMode="never"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
                         android:paddingBottom="12dp"
                         android:scrollbars="none"
-                        android:overScrollMode="never"
                         tools:listitem="@layout/item_parking_spot" />
 
                 </LinearLayout>
@@ -396,16 +411,16 @@
         style="@style/Widget.Material3.CardView.Elevated"
         android:layout_width="match_parent"
         android:layout_height="80dp"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="0dp"
         app:cardElevation="16dp"
-        app:cardBackgroundColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:gravity="center"
+            android:orientation="horizontal"
             android:paddingStart="40dp"
             android:paddingEnd="40dp">
 
@@ -415,18 +430,18 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
                     style="@style/Widget.Material3.CardView.Filled"
                     android:layout_width="56dp"
                     android:layout_height="56dp"
-                    app:cardCornerRadius="28dp"
                     app:cardBackgroundColor="@color/app_blue"
+                    app:cardCornerRadius="28dp"
                     app:cardElevation="8dp">
 
                     <ImageView
@@ -442,11 +457,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
+                    android:fontFamily="sans-serif-medium"
                     android:text="@string/user_details"
                     android:textColor="@color/app_blue"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif-medium" />
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

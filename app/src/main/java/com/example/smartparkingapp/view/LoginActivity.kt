@@ -40,6 +40,8 @@ class LoginActivity : AppCompatActivity() {
     private fun setupListeners() {
         // Setup login button
         binding.btnLogin.setOnClickListener {
+            binding.btnLogin.isEnabled = false
+            binding.btnLogin.text = "Logging in..."
             val systemId = SYSTEMID
             val userEmail = binding.etUserEmail.text.toString().trim()
 
@@ -65,6 +67,9 @@ class LoginActivity : AppCompatActivity() {
 
                 } catch (e: IllegalArgumentException) {
                     withContext(Dispatchers.Main) {
+                        binding.btnLogin.isEnabled = true
+                        binding.btnLogin.text = getString(R.string.Login)
+                        Toast.makeText(this@LoginActivity, getString(R.string.login_successful), Toast.LENGTH_SHORT).show()
                         // Handle validation errors
                         when {
                             e.message?.contains("email", ignoreCase = true) == true -> {

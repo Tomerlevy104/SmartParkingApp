@@ -22,21 +22,4 @@ class UserController(private val userService: IUserService) {
     ) {
          userService.updateUser(userEmail,systemID,role, username, avatar)
     }
-
-    fun getCurrentUser(systemId: String, email: String): UserModel? {
-        return userService.login(systemId, email)
-    }
-
-    fun logout(): Boolean {
-        return userService.logout()
-    }
-
-    fun isLoggedIn(): Boolean {
-        return userService.getCurrentUser() != null
-    }
-
-    fun refreshCurrentUserProfile(): UserModel {
-        return userService.refreshCurrentUserProfile()
-    }
-
 }

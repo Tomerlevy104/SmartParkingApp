@@ -6,16 +6,16 @@ import com.example.smartparkingapp.services.IUserService
 import com.example.smartparkingapp.api.RegisterRequest
 import com.example.smartparkingapp.api.UpdateUserRequest
 import com.example.smartparkingapp.api.RetrofitClient
-import com.example.smartparkingapp.api.UserBoundaryResponse
 import com.example.smartparkingapp.model.util.UserId
+import com.example.smartparkingapp.utils.ObjectAndUserConverter
 
 class UserServiceImpl : IUserService {
 
     private var currentUser: UserModel? = null
-    private val SYSTEMID: String = "2025b.integrative.smartParking"
+    private val converter = ObjectAndUserConverter()
 
     override fun register(email: String, role: String, username: String, avatar: String): UserModel {
-        // Complete input validation with field-specific errors
+        // Validation Input
         validateRegistrationInput(email, username, role)
 
         try {
@@ -36,7 +36,7 @@ class UserServiceImpl : IUserService {
                     ?: throw Exception("Registration failed: Server returned empty response")
 
                 // Convert server response to UserModel
-                val user = convertServerResponseToUserModel(serverResponse)
+                val user = converter.convertServerResponseToUserModel(serverResponse)
 
                 // Save the new user
                 currentUser = user
@@ -75,7 +75,7 @@ class UserServiceImpl : IUserService {
                 Log.d("UserServiceImpl", "Received response from server: $serverResponse")
 
                 // Convert server response to UserModel
-                val user = convertServerResponseToUserModel(serverResponse)
+                val user = converter.convertServerResponseToUserModel(serverResponse)
 
                 // Save the logged in user
                 currentUser = user
@@ -100,22 +100,6 @@ class UserServiceImpl : IUserService {
             // Throw error with clear message
             throw Exception("Login failed: ${e.message}")
         }
-    }
-
-    override fun getCurrentUser(): UserModel? {
-        return currentUser
-    }
-
-    override fun logout(): Boolean {
-        currentUser = null
-        Log.d("UserServiceImpl", "User logged out")
-        return true
-    }
-
-    override fun refreshCurrentUserProfile(): UserModel {
-        currentUser?.let {
-            return login(SYSTEMID, it.email)
-        } ?: throw Exception("No logged in user")
     }
 
     override fun updateUser(
@@ -168,19 +152,7 @@ class UserServiceImpl : IUserService {
         }
     }
 
-    /**
-     * Convert ServerUserResponse to UserModel
-     */
-    private fun convertServerResponseToUserModel(serverResponse: UserBoundaryResponse): UserModel {
-        return UserModel(
-            email = serverResponse.userId.email,
-            username = serverResponse.username,
-            role = serverResponse.role,
-            avatar = serverResponse.avatar
-        )
-    }
-
-    // Helper functions for input validation - throws field-specific errors
+    // Function for input validation
     private fun validateRegistrationInput(email: String, username: String, role: String) {
         // Email validation
         if (email.isBlank()) {
