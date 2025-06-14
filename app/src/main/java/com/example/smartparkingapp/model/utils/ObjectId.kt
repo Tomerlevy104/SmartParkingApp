@@ -1,4 +1,4 @@
-package com.example.smartparkingapp.model.util
+package com.example.smartparkingapp.model.utils
 
 data class ObjectId(
     val systemId: String = "",

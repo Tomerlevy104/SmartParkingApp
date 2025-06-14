@@ -7,14 +7,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    // Afeka IP: 172.20.20.96
-    // Tomer's iphon IP: 172.20.10.6
-    // Dira IP: 192.168.1.125
-    // KfarYona: 192.168.68.107
-    // ficus: 172.20.29.215
-    // kirya: 172.20.26.173
-    //192.168.56.1
-    private const val BASE_URL = "http://192.168.68.107:8081/" // This points to localhost on your computer when running in the Android emulator
+
+    private const val BASE_URL =
+        "http://192.168.68.107:8081/" // Replace with your actual server IP address
 
     // Create OkHttpClient with logging
     private val okHttpClient = OkHttpClient.Builder()

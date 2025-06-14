@@ -6,7 +6,6 @@ interface IUserService {
 
     /**
      * Registers a new user with the provided information
-     *
      * @param email Email for the new user
      * @param role Role for the new user
      * @param username Username for the new user
@@ -17,7 +16,6 @@ interface IUserService {
 
     /**
      * Authenticates a user with the given system ID and email
-     *
      * @param systemId The system ID to authenticate with
      * @param email The email to authenticate with
      * @return User object if authentication is successful
@@ -26,19 +24,18 @@ interface IUserService {
 
     /**
      * Updates a specific user's profile
-     *
      * @param userId The ID of the user to update
-     * @param email New email (optional)
-     * @param username New username (optional)
-     * @param role New role (optional)
-     * @param avatar New avatar (optional)
+     * @param email New email
+     * @param username New username
+     * @param role New role
+     * @param avatar New avatar
      * @return The updated User object
      */
     fun updateUser(
         userEmail: String,
         systemID: String,
-        role: String? = null,
-        username: String? = null,
-        avatar: String? = null
+        role: String,
+        username: String,
+        avatar: String
     )
 }

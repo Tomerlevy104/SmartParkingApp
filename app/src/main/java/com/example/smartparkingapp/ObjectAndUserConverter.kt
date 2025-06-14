@@ -1,15 +1,18 @@
-package com.example.smartparkingapp.utils
+package com.example.smartparkingapp
 
 import android.util.Log
 import com.example.smartparkingapp.api.ObjectBoundaryResponse
-import com.example.smartparkingapp.api.UserBoundaryResponse
+import com.example.smartparkingapp.api.UserBoundary
 import com.example.smartparkingapp.model.ParkingSpotModel
 import com.example.smartparkingapp.model.UrbanZoneModel
 import com.example.smartparkingapp.model.UserModel
-import com.example.smartparkingapp.model.util.CreatedBy
-import com.example.smartparkingapp.model.util.ObjectId
-import com.example.smartparkingapp.model.util.UserId
+import com.example.smartparkingapp.model.utils.CreatedBy
+import com.example.smartparkingapp.model.utils.ObjectId
+import com.example.smartparkingapp.model.utils.UserId
 
+/**
+ * Converter Class
+ */
 class ObjectAndUserConverter {
 
     /**
@@ -19,7 +22,7 @@ class ObjectAndUserConverter {
         try {
             // Check that it is indeed UrbanZone
             if (boundary.type.lowercase() != "urbanzone") {
-                Log.w("ObjectConverter", "Object type is not urbanzone: ${boundary.type}")
+                Log.d("ObjectConverter", "Object type is not urbanzone: ${boundary.type}")
                 return null
             }
 
@@ -84,7 +87,7 @@ class ObjectAndUserConverter {
         try {
             // Check that it is indeed ParkingSpot
             if (boundary.type.lowercase() != "parkingspot") {
-                Log.w("ObjectConverter", "Object type is not parkingspot: ${boundary.type}")
+                Log.d("ObjectConverter", "Object type is not parkingspot: ${boundary.type}")
                 return null
             }
 
@@ -111,38 +114,12 @@ class ObjectAndUserConverter {
     /**
      * Convert ServerUserResponse to UserModel
      */
-     fun convertServerResponseToUserModel(serverResponse: UserBoundaryResponse): UserModel {
+     fun convertServerResponseToUserModel(serverResponse: UserBoundary): UserModel {
         return UserModel(
             email = serverResponse.userId.email,
             username = serverResponse.username,
             role = serverResponse.role,
             avatar = serverResponse.avatar
         )
-    }
-
-    fun convertToParkingSpotModel(boundary: ObjectBoundaryResponse): ParkingSpotModel? {
-        return try {
-            // Check if it's a parking spot type
-            if (boundary.type.lowercase() != "parkingspot") {
-                Log.w("ObjectService", "Object type is not parkingspot: ${boundary.type}")
-                return null
-            }
-
-            val details = boundary.objectDetails
-
-            ParkingSpotModel(
-                id = boundary.objectId.objectId,
-                restrictions = details["restrictions"]?.toString() ?: "",
-                occupied = details["occupied"]?.toString()?.toBoolean() ?: false,
-                turnoverRate = details["turnoverRate"]?.toString() ?: "",
-                address = details["address"]?.toString() ?: "",
-                zoneId = details["zoneId"]?.toString() ?: "",
-                isCovered = details["isCovered"]?.toString()?.toBoolean() ?: false,
-                pricePerHour = details["pricePerHour"]?.toString() ?: ""
-            )
-        } catch (e: Exception) {
-            Log.e("ObjectService", "Error converting to ParkingSpotModel", e)
-            null
-        }
     }
 }

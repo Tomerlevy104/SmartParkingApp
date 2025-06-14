@@ -1,4 +1,4 @@
-package com.example.smartparkingapp.model.util
+package com.example.smartparkingapp.model.utils
 
 import com.google.gson.annotations.SerializedName
 

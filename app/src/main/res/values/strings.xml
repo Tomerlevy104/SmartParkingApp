@@ -48,6 +48,8 @@
     <string name="hourly_rate">Hourly Rate:</string>
     <string name="available_parking_spots">Available Parking Spots</string>
     <string name="covered">Covered</string>
+    <string name="not_covered">Not Covered</string>
+
 
     <!-- User Details Fragment -->
     <string name="profile_information">Profile Information</string>
@@ -68,12 +70,31 @@
     <string name="role_admin">Administrator</string>
     <string name="role_operator">Operator</string>
     <string name="role_end_user">End User</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="total">Total:</string>
     <string name="available">Available:</string>
     <string name="navigate">Navigate</string>
     <string name="ten">10</string>
     <string name="Login">Login...</string>
+    <string name="please_select_avatar">Please select Avatar</string>
+    <string name="registering">Registering...</string>
+    <string name="please_select_role">Please select Role</string>
+    <string name="no_details">null</string>
+    <string name="smart_parking_solutions">Smart Parking Solutions</string>
+    <string name="select_urban_zone">Select Urban Zone</string>
+    <string name="eight">₪8.00</string>
+    <string name="live">Live</string>
+    <string name="no_available_parking_spots_in_this_zone">No available parking spots in this zone</string>
+    <string name="user_example_com">user@example.com</string>
+    <string name="parking_spot_details">Parking Spot Details</string>
+    <string name="address">Address</string>
+    <string name="address_will_be_set_here">Address will be set here</string>
+    <string name="coverage">Coverage</string>
+    <string name="restrictions">Restrictions</string>
+    <string name="restrictions_will_be_set_here">Restrictions will be set here</string>
+    <string name="close">Close</string>
+    <string name="_12_dizengoff_street">12 Dizengoff Street</string>
+    <string name="_2_hour_maximum">2 hour maximum</string>
 
 </resources>

@@ -5,6 +5,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.smartparkingapp.databinding.ActivityWelcomeBinding
 
+/**
+ * Welcome screen activity
+ */
 class WelcomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWelcomeBinding

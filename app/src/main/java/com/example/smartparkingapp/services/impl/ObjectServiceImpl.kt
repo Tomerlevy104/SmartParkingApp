@@ -6,16 +6,20 @@ import com.example.smartparkingapp.api.ObjectBoundaryResponse
 import com.example.smartparkingapp.api.RetrofitClient
 import com.example.smartparkingapp.model.ParkingSpotModel
 import com.example.smartparkingapp.model.UrbanZoneModel
-import com.example.smartparkingapp.model.util.CommandId
-import com.example.smartparkingapp.model.util.InvokedBy
-import com.example.smartparkingapp.model.util.ObjectId
-import com.example.smartparkingapp.model.util.TargetObject
-import com.example.smartparkingapp.model.util.UserId
+import com.example.smartparkingapp.model.utils.CommandId
+import com.example.smartparkingapp.model.utils.InvokedBy
+import com.example.smartparkingapp.model.utils.ObjectId
+import com.example.smartparkingapp.model.utils.TargetObject
+import com.example.smartparkingapp.model.utils.UserId
 import com.example.smartparkingapp.services.IObjectService
-import com.example.smartparkingapp.utils.ObjectAndUserConverter
+import com.example.smartparkingapp.ObjectAndUserConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+/**
+ * Implementation of object service for managing parking-related entities.
+ * Handles communication with the server API for urban zones and parking spots.
+ */
 class ObjectServiceImpl : IObjectService {
 
     private val SYSTEMID = "2025b.integrative.smartParking"
@@ -184,7 +188,7 @@ class ObjectServiceImpl : IObjectService {
             email = userIdMap["email"]?.toString() ?: "",
             systemID = userIdMap["systemId"]?.toString() ?: ""
         )
-        val createdByResponse = com.example.smartparkingapp.model.util.CreatedBy(
+        val createdByResponse = com.example.smartparkingapp.model.utils.CreatedBy(
             userId = userIdResponse
         )
 

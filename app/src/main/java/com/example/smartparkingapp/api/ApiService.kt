@@ -1,29 +1,35 @@
-// api/ApiService.kt - Fix the login method and adapt register for Spring server
 package com.example.smartparkingapp.api
 
-import com.example.smartparkingapp.model.util.CommandId
-import com.example.smartparkingapp.model.util.CreatedBy
-import com.example.smartparkingapp.model.util.InvokedBy
-import com.example.smartparkingapp.model.util.ObjectId
-import com.example.smartparkingapp.model.util.TargetObject
-import com.example.smartparkingapp.model.util.UserId
+import com.example.smartparkingapp.model.utils.CommandId
+import com.example.smartparkingapp.model.utils.CreatedBy
+import com.example.smartparkingapp.model.utils.InvokedBy
+import com.example.smartparkingapp.model.utils.ObjectId
+import com.example.smartparkingapp.model.utils.TargetObject
+import com.example.smartparkingapp.model.utils.UserId
 import retrofit2.Call
 import retrofit2.http.*
 import java.util.Date
 
+/**
+ * API Service Interface for Smart Parking Application
+ * Provides RESTful API endpoints
+ */
 interface ApiService {
 
     @GET("ambient-intelligence/users/login/{systemID}/{userEmail}")
-    fun login(@Path("systemID") systemID: String, @Path("userEmail") userEmail: String): Call<UserBoundaryResponse>
+    fun login(
+        @Path("systemID") systemID: String,
+        @Path("userEmail") userEmail: String
+    ): Call<UserBoundary>
 
     @POST("ambient-intelligence/users")
-    fun register(@Body registerRequest: RegisterRequest): Call<UserBoundaryResponse>
+    fun register(@Body newUserBoundary: NewUserBoundary): Call<UserBoundary>
 
     @PUT("ambient-intelligence/users/{systemID}/{userEmail}")
     fun updateUser(
         @Path("systemID") systemID: String,
         @Path("userEmail") userEmail: String,
-        @Body updateRequest: UpdateUserRequest
+        @Body updateRequest: UserBoundary
     ): Call<Void>
 
     @GET("ambient-intelligence/objects/search/byType/{type}")
@@ -41,16 +47,18 @@ interface ApiService {
     ): Call<Any>
 }
 
-data class CommandRequest(
-    val id: CommandId,
-    val command : String,
-    val targetObject : TargetObject,
-    val invocationTimestamp : Date?,
-    val invokedBy: InvokedBy,
-    val commandAttributes: Map<String, Any>
+/**
+ * Data Class
+ */
+
+data class NewUserBoundary(
+    val email: String,
+    val username: String,
+    val role: String,
+    val avatar: String
 )
 
-data class UserBoundaryResponse(
+data class UserBoundary(
     val userId: UserId,
     val role: String,
     val username: String,
@@ -68,16 +76,11 @@ data class ObjectBoundaryResponse(
     val objectDetails: Map<String, Any>
 )
 
-data class RegisterRequest(
-    val email: String,
-    val username: String,
-    val role: String,
-    val avatar: String
-)
-
-data class UpdateUserRequest(
-    val userId: UserId? = null,
-    val role: String? = null,
-    val username: String? = null,
-    val avatar: String? = null
+data class CommandRequest(
+    val id: CommandId,
+    val command: String,
+    val targetObject: TargetObject,
+    val invocationTimestamp: Date?,
+    val invokedBy: InvokedBy,
+    val commandAttributes: Map<String, Any>
 )

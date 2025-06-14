@@ -1,10 +1,10 @@
 package com.example.smartparkingapp.model
 
-import com.example.smartparkingapp.model.util.CreatedBy
-import com.example.smartparkingapp.model.util.ObjectId
+import com.example.smartparkingapp.model.utils.CreatedBy
+import com.example.smartparkingapp.model.utils.ObjectId
 
 /**
- * UrbanZone - יורש מ-BaseObject עם getters/setters פשוטים
+ * Model representing an urban zone.
  */
 class UrbanZoneModel(
     objectId: ObjectId,
@@ -35,6 +35,18 @@ class UrbanZoneModel(
         return this.description
     }
 
+    fun getTotalParkingSpots(): Int {
+        return this.totalParkingSpots
+    }
+
+    fun getAvailableParkingSpots(): Int {
+        return this.availableParkingSpots
+    }
+
+    fun getBaseHourlyRate(): Double {
+        return this.baseHourlyRate
+    }
+
     fun getLatitude(): Double {
         return this.latitude
     }
@@ -49,18 +61,6 @@ class UrbanZoneModel(
 
     fun getZoneType(): String {
         return this.zoneType
-    }
-
-    fun getTotalParkingSpots(): Int {
-        return this.totalParkingSpots
-    }
-
-    fun getAvailableParkingSpots(): Int {
-        return this.availableParkingSpots
-    }
-
-    fun getBaseHourlyRate(): Double {
-        return this.baseHourlyRate
     }
 
     // Setters

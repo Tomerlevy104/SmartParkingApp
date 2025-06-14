@@ -1,7 +1,7 @@
 package com.example.smartparkingapp.model
 
-import com.example.smartparkingapp.model.util.CreatedBy
-import com.example.smartparkingapp.model.util.ObjectId
+import com.example.smartparkingapp.model.utils.CreatedBy
+import com.example.smartparkingapp.model.utils.ObjectId
 
 /**
  * Basic class for all object

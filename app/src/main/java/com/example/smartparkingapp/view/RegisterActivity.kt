@@ -7,38 +7,36 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.smartparkingapp.R
+import com.example.smartparkingapp.ValidationException
 import com.example.smartparkingapp.controller.UserController
 import com.example.smartparkingapp.databinding.ActivityRegisterBinding
 import com.example.smartparkingapp.model.UserModel
 import com.example.smartparkingapp.services.impl.UserServiceImpl
-import com.example.smartparkingapp.services.impl.ValidationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * Register screen activity
+ */
 class RegisterActivity : AppCompatActivity() {
 
+    private lateinit var userController: UserController
+    private lateinit var userService: UserServiceImpl
+    private var currentUser: UserModel? = null
     private lateinit var binding: ActivityRegisterBinding
     private var avatarString: String = "default"
-    private lateinit var userController: UserController
-    private var currentUser: UserModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Initialize the Controller
-        initializeController()
-
+        // Initialize the service and controller
+        userService = UserServiceImpl()
+        userController = UserController(userService)
         setupRoleDropdown()
         setupAvatarDropdown()
         setupListeners()
-    }
-
-    private fun initializeController() {
-        val userService = UserServiceImpl()
-        userController = UserController(userService)
     }
 
     private fun setupRoleDropdown() {
@@ -46,7 +44,7 @@ class RegisterActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, R.layout.dropdown_item, roles)
         binding.dropdownRole.setAdapter(adapter)
         // Set default selection
-        binding.dropdownRole.setText("Please select Role", false)
+        binding.dropdownRole.setText(getString(R.string.please_select_role), false)
     }
 
     private fun setupAvatarDropdown() {
@@ -68,13 +66,11 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             binding.ivAvatarPreview.setImageResource(resourceId)
-            binding.tvAvatarSelected.text = "Selected avatar: $selectedAvatar"
         }
 
         // Set default selection
-        binding.dropdownAvatar.setText("Please select Avatar", false)
+        binding.dropdownAvatar.setText(getString(R.string.please_select_avatar), false)
         binding.ivAvatarPreview.setImageResource(R.drawable.avatar_default)
-        binding.tvAvatarSelected.text = "Selected avatar: default"
     }
 
     private fun setupListeners() {
@@ -150,7 +146,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun showLoading(show: Boolean) {
         if (show) {
             binding.btnRegister.isEnabled = false
-            binding.btnRegister.text = "Registering..."
+            binding.btnRegister.text = getString(R.string.registering)
         }
     }
 

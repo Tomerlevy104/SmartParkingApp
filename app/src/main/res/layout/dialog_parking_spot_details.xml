@@ -36,7 +36,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Parking Spot Details"
+                android:text="@string/parking_spot_details"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -98,7 +98,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Address"
+                        android:text="@string/address"
                         android:textColor="@color/app_blue"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -109,7 +109,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Address will be set here"
+                        android:text="@string/address_will_be_set_here"
                         android:textColor="@color/app_blue"
                         android:textSize="16sp"
                         android:fontFamily="sans-serif" />
@@ -156,7 +156,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hourly Rate"
+                        android:text="@string/hourly_rate"
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         android:alpha="0.8" />
@@ -166,7 +166,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="₪8.00"
+                        android:text="@string/eight"
                         android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -203,7 +203,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Coverage"
+                        android:text="@string/coverage"
                         android:textSize="12sp"
                         android:alpha="0.8" />
 
@@ -212,7 +212,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Covered"
+                        android:text="@string/covered"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:fontFamily="sans-serif-medium" />
@@ -257,7 +257,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Restrictions"
+                        android:text="@string/restrictions"
                         android:textColor="@color/app_red"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -268,7 +268,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Restrictions will be set here"
+                        android:text="@string/restrictions_will_be_set_here"
                         android:textColor="@color/app_red"
                         android:textSize="14sp"
                         android:fontFamily="sans-serif" />
@@ -286,7 +286,7 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:backgroundTint="@color/app_blue"
-            android:text="Close"
+            android:text="@string/close"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"

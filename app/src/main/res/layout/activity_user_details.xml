@@ -111,11 +111,11 @@
                 android:layout_marginBottom="16dp"
                 android:background="@color/light_gray"
                 android:padding="16dp"
-                android:text="user@example.com"
+                android:text="@string/user_example_com"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
-            <!-- Username Field (Editable) -->
+            <!-- Username Field -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -132,7 +132,7 @@
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Role Field (Editable) -->
+            <!-- Role Field -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"

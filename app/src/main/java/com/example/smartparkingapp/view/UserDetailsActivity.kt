@@ -16,6 +16,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * User Details screen activity
+ */
 class UserDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserDetailsBinding
@@ -34,7 +37,7 @@ class UserDetailsActivity : AppCompatActivity() {
         setupAvatarDropdown()
         setupListeners()
 
-        // Load user from server instead of intent
+        // Load user from server
         getCurrentUserFromService()
     }
 

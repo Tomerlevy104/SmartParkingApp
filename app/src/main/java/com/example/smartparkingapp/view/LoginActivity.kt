@@ -14,6 +14,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * Login screen activity
+ */
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
@@ -30,7 +33,7 @@ class LoginActivity : AppCompatActivity() {
         userService = UserServiceImpl()
         userController = UserController(userService)
 
-        // Set the default system ID and make it read-only (gray)
+        // Set the default system ID and make it read-only
         binding.etSystemId.setText(SYSTEMID)
         binding.etSystemId.isEnabled = false
 
