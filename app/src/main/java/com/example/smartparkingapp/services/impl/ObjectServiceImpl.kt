@@ -81,6 +81,7 @@ class ObjectServiceImpl : IObjectService {
             throw Exception("Failed to fetch urban zones: ${e.message}")
         }
     }
+
     override fun getAllNonOccupiedParkingSpotsFromUrbanZone(
         userEmail: String,
         urbanZoneId: String
@@ -123,7 +124,6 @@ class ObjectServiceImpl : IObjectService {
 
                 if (result != null) {
                     // The result should be a List of parking spots
-                    @Suppress("UNCHECKED_CAST")
                     val parkingSpotsList = when (result) {
                         is List<*> -> {
                             result.mapNotNull { item ->

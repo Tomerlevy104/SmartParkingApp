@@ -10,6 +10,9 @@ import com.example.smartparkingapp.api.UserBoundary
 import com.example.smartparkingapp.model.utils.UserId
 import com.example.smartparkingapp.ObjectAndUserConverter
 
+/**
+ * User service implementation for API operations
+ */
 class UserServiceImpl : IUserService {
 
     private var currentUser: UserModel? = null

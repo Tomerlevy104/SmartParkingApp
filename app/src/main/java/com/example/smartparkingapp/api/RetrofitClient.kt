@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
 
     private const val BASE_URL =
-        "http://192.168.68.107:8081/" // Replace with your actual server IP address
+        "http://XXX.XX.XX.XX:XXXX/" // Replace with your actual server IP address with Port 8081
 
     // Create OkHttpClient with logging
     private val okHttpClient = OkHttpClient.Builder()
